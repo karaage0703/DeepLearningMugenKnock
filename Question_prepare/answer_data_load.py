@@ -12,7 +12,7 @@ def data_load(path):
     xs = np.ndarray((0, img_height, img_width, 3))
     ts = np.ndarray((0))
     paths = []
-    
+
     for dir_path in glob(path + '/*'):
         for path in glob(dir_path + '/*'):
             x = cv2.imread(path)
@@ -20,11 +20,11 @@ def data_load(path):
             x /= 255.
             xs = np.r_[xs, x[None, ...]]
 
-            t = np.zeros((1))
+            t = None
             if 'akahara' in path:
-                t = np.array((0))
+                t = 0
             elif 'madara' in path:
-                t = np.array((1))
+                t = 1
             ts = np.r_[ts, t]
 
             paths.append(path)
