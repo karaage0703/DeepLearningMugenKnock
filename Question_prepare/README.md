@@ -10,6 +10,7 @@
 ただしこの順番はフレームワークによって変わる。
 
 
+| フレームワーク | データの順番 |
 |:---:|:---:|
 | Tensorflow, Keras(Tensorflow)| [データ数、画像の縦サイズ、画像の横サイズ、チャネル] |
 | PyTorch, Chainer, Caffe  | [データ数、チャネル、画像の縦サイズ、画像の横サイズ] |
@@ -21,6 +22,7 @@
 これもフレームワークによって変わる。
 
 
+| フレームワーク | 教師ラベルのデータ |
 |:---:|:---:|
 | PyTorch, Chainer | index [データ数] |
 | Tensorflow, Keras(Tensorflow), Caffe  | one-hot [データ数、クラス数] |
@@ -50,16 +52,18 @@ from glob import glob
 num_classes = 2
 img_height, img_width = 64, 64
 
-def data_laod(path):
-    xs = np.ndarray((0, img_height, img_width, 3))
-    ts = np.ndarray((0))
+CLS = ['akahara', 'madara']
+
+def data_load(path):
+    xs = []
+    ts = []
     paths = []
-    
+
     # answer your code
     ...
     #
     return xs, ts, paths
-    
+
 xs, ts, paths = data_load('../Dataset/train/images/')
 ```
 

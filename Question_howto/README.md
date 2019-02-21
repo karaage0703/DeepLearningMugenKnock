@@ -1,5 +1,14 @@
 # Q. 3. CNNでの各フレームワークの使い方
 
+## フレームワーク早見表
+
+| | PyTorch | Tensorflow | Keras | Chainer | Caffe |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 入力 | [mb,c,h,w] | [mb, h, w, c] | [mb, h, w, c] | [mc, c, h, w] | [mb, c, h, w] |
+| 教師ラベル | index [mb] | onehot [mb, cls] | onehot [mb, cls] | index [mb] | index [mb] |
+| 速度 | まあまあ早い | 早い | 早い | 普通 | まあまあ早い？ |
+
+
 ## Q.1. 共通事項
 
 ディープラーニングのフレームワークは今たくさんある。
@@ -32,6 +41,8 @@
 | Tensorflow | sessionという独特な仕組みを使う。モデルを定義→sessionに入れて計算みたいな流れを取る。 |
 | Keras | 上に比べて結構シンプルに書ける。独特な型とかを意識せずに使える。ただしコアな改造がしにくい。 |
 | Caffe | モデル定義を別ファイルに用意しなきゃいけないのでけっこうめんどう。コードよりもファイルの数が必然的に多くなる。　それ以外はシンプルに書けて意外と便利な部分が多い。|
+
+CPUでの計算時間の速さでいうと、体感的に **Tensorflow, Keras(Tensorflow) >>> PyTorch, Caffe > Chainer** という感じがする。さすがgo◯gle
 
 
 ## 2. PyTorchの使い方

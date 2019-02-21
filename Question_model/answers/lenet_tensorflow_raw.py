@@ -51,27 +51,47 @@ def Mynet(x, keep_prob):
     x = fc(x, in_num=64, out_num=num_classes, name='fc_out')
     return x
 
+CLS = ['akahara', 'madara']
+
 # get train data
-def data_load(dir_path):
-    xs = np.ndarray((0, img_height, img_width, 3))
-    ts = np.ndarray((0, num_classes))
+def data_load(path, hf=False, vf=False):
+    xs = []
+    ts = []
     paths = []
     
-    for dir_path in glob(dir_path + '/*'):
+    for dir_path in glob(path + '/*'):
         for path in glob(dir_path + '/*'):
             x = cv2.imread(path)
             x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
             x /= 255.
-            xs = np.r_[xs, x[None, ...]]
+            xs.append(x)
 
-            t = np.zeros((num_classes))
-            if 'akahara' in path:
-                t[0] = 1
-            elif 'madara' in path:
-                t[1] = 1
-            ts = np.r_[ts, t[None, ...]]
+            t = [0 for _ in range(num_classes)]
+            for i, cls in enumerate(CLS):
+                if cls in path:
+                    t[i] = 1
+            
+            ts.append(t)
 
-            paths += [path]
+            paths.append(path)
+
+            if hf:
+                xs.append(x[:, ::-1])
+                ts.append(t)
+                paths.append(path)
+
+            if vf:
+                xs.append(x[::-1])
+                ts.append(t)
+                paths.append(path)
+
+            if hf and vf:
+                xs.append(x[::-1, ::-1])
+                ts.append(t)
+                paths.append(path)
+
+    xs = np.array(xs, dtype=np.float32)
+    ts = np.array(ts, dtype=np.int)
 
     return xs, ts, paths
 

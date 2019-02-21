@@ -3,6 +3,8 @@
 
 ディープラーニング∞本（？）ノックぅぅ
 
+まだ作成中なのであしからず
+
 何問になるか分からないので∞本になってます。多分これからいろんな技術が出るからどんどん更新する予定でっす。
 これはイモリと一緒にディープラーニングの基礎からDLのライブラリの扱い、どういうDLの論文があったかを実装しながら学んでいくための問題集です。本とか論文読んだだけじゃ机上の空想でしかないので、ネットワークの作成や学習率などのハイパーパラメータの設定を自分の手を動かしながら勉強するための問題集です。
 
@@ -52,6 +54,15 @@ $ git clone https://github.com/yoyoyo-yo/DeepLearningMugenKnock.git
 ```bash
 $ pip install -r requirements.txt
 ```
+
+## フレームワーク早見表
+
+| | PyTorch | Tensorflow | Keras | Chainer | Caffe |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| 入力 | [mb,c,h,w] | [mb, h, w, c] | [mb, h, w, c] | [mc, c, h, w] | [mb, c, h, w] |
+| 教師ラベル | index [mb] | onehot [mb, cls] | onehot [mb, cls] | index [mb] | index [mb] |
+| 速度 | まあまあ早い | 早い | 早い | 普通 | まあまあ早い？ |
+
 
 ## 問題
 
