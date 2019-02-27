@@ -111,7 +111,17 @@ $ pip install -r requirements.txt
 | GoogLeNet
 | [Batch Normalization](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model#q-vgg19) | [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/bn_pytorch.py) | [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/bn_tensorflow_layers.py) | [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/bn_keras.py) | [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/bn_chainer.py) | 
 
-### [Semantic Segmentationの有名モデル実装編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg)
+### [Semantic Segmentation編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg)
+| 問題 |  PyTorch | TensorFlow | Keras | Chainer |
+|:---:|:---:|:---:|:---:|:---:|
+| [SemanticSegmentationとは](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#semanticsegmentation%E3%81%A8%E3%81%AF) |
+| [Binalization Step.1. データセット読み込み](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#binalization%E3%81%AB%E3%82%88%E3%82%8Bsemasegstep1-%E3%83%87%E3%83%BC%E3%82%BF%E3%82%BB%E3%83%83%E3%83%88%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF) | [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/bin_dataset_pytorch.py) |
+| [Binalization Step.2. 学習時のLoss計算](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#binalization-step2-%E5%AD%A6%E7%BF%92%E6%99%82%E3%81%AEloss%E8%A8%88%E7%AE%97)| [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/bin_loss_pytorch.py) | 
+| [Binalization Step.3. テスト時の予測結果の表示](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#binalization%E3%81%AB%E3%82%88%E3%82%8Bsemasegstep3-%E3%83%86%E3%82%B9%E3%83%88%E6%99%82%E3%81%AE%E4%BA%88%E6%B8%AC%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A1%A8%E7%A4%BA) |  [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/bin_test_pytorch.py) | 
+| [SemanticSegmentation Step.1. データセット読み込み](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#semantic-segmentation-step1-%E3%83%87%E3%83%BC%E3%82%BF%E3%82%BB%E3%83%83%E3%83%88%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF) | [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/semaseg_dataset_pytorch.py) |
+| [SemanticSegmentation Step.2. 学習時のLoss計算](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#semantic-segmentation-step2-%E5%AD%A6%E7%BF%92%E6%99%82%E3%81%AEloss%E8%A8%88%E7%AE%97)| [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/semaseg_loss_pytorch.py) | 
+| [SemanticSegmentation Step.3. テスト時の予測結果の表示](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#semantic-segmentation-step2-%E3%83%86%E3%82%B9%E3%83%88%E6%99%82%E3%81%AE%E4%BA%88%E6%B8%AC%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A1%A8%E7%A4%BA) |  [◯](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/semaseg_test_pytorch.py) | 
+
 
 ### [画像処理編]()
 
