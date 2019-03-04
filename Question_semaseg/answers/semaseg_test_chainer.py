@@ -5,88 +5,40 @@ import argparse
 import cv2
 import numpy as np
 from glob import glob
+import matplotlib.pyplot as plt
 
 num_classes = 2
-img_height, img_width = 224, 224
+img_height, img_width = 64, 64#572, 572
+out_height, out_width = 64, 64#388, 388
 GPU = -1
-
+    
 class Mynet(chainer.Chain):
-    def __init__(self, train=True):
+    def __init__(self, train=False):
         self.train = train
         super(Mynet, self).__init__()
         with self.init_scope():
-            # block conv1
-            self.conv1 = []
-            for i in range(2):
-                self.conv1.append(L.Convolution2D(None, 64, ksize=3, pad=1, stride=1, nobias=False))
-                self.conv1.append(L.BatchNormalization(64))
+            self.conv1 = chainer.Sequential()
+            for i in range(6):
+                self.conv1.append(L.Convolution2D(None, 32, ksize=3, pad=1, stride=1, nobias=True))
+                self.conv1.append(F.relu)
+                self.conv1.append(L.BatchNormalization(32))
                 
-            # block conv2
-            self.conv2 = []
-            for i in range(2):
-                self.conv2.append(L.Convolution2D(None, 128, ksize=3, pad=1, stride=1, nobias=False))
-                self.conv2.append(L.BatchNormalization(128))
-                
-            # block conv3
-            self.conv3 = []
-            for i in range(3):
-                self.conv3.append(L.Convolution2D(None, 256, ksize=3, pad=1, stride=1, nobias=False))
-                self.conv3.append(L.BatchNormalization(256))
-                
-            # block conv4
-            self.conv4 = []
-            for i in range(3):
-                self.conv4.append(L.Convolution2D(None, 512, ksize=3, pad=1, stride=1, nobias=False))
-                self.conv4.append(L.BatchNormalization(512))
-                
-            # block conv1
-            self.conv5 = []
-            for i in range(3):
-                self.conv5.append(L.Convolution2D(None, 512, ksize=3, pad=1, stride=1, nobias=False))
-                self.conv5.append(L.BatchNormalization(512))
-            
-            self.fc1 = L.Linear(None, 4096, nobias=False)
-            self.fc2 = L.Linear(None, 4096, nobias=False)
-            self.fc_out = L.Linear(None, num_classes, nobias=False)
-
-    def __call__(self, x):
-        # block conv1
-        for layer in self.conv1:
-            x = F.relu(layer(x))
-        x = F.max_pooling_2d(x, ksize=2, stride=2)
+            self.out = L.Convolution2D(None, num_classes+1, ksize=1, pad=0, stride=1, nobias=False)
         
-        # block conv2
-        for layer in self.conv2:
-            x = F.relu(layer(x))
-        x = F.max_pooling_2d(x, ksize=2, stride=2)
-
-        # block conv3
-        for layer in self.conv3:
-            x = F.relu(layer(x))
-        x = F.max_pooling_2d(x, ksize=2, stride=2)
-
-        # block conv4
-        for layer in self.conv4:
-            x = F.relu(layer(x))
-        x = F.max_pooling_2d(x, ksize=2, stride=2)
-
-        # block conv5
-        for layer in self.conv5:
-            x = F.relu(layer(x))
-        x = F.max_pooling_2d(x, ksize=2, stride=2)
-
-        x = F.relu(self.fc1(x))
-        x = F.dropout(x)
-        x = F.relu(self.fc2(x))
-        x = F.dropout(x)
-        x = self.fc_out(x)
+    def forward(self, x):
+        # block conv1
+        x = self.conv1(x)
+        x = self.out(x)
         return x
 
-
+    
+CLS = {'akahara': [0,0,128],
+       'madara': [0,128,0]}
+    
 # get train data
 def data_load(path, hf=False, vf=False):
-    xs = np.ndarray((0, img_height, img_width, 3), dtype=np.float32)
-    ts = np.ndarray((0), dtype=np.int)
+    xs = []
+    ts = []
     paths = []
     
     for dir_path in glob(path + '/*'):
@@ -94,31 +46,45 @@ def data_load(path, hf=False, vf=False):
             x = cv2.imread(path)
             x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
             x /= 255.
-            xs = np.r_[xs, x[None, ...]]
+            x = x[..., ::-1]
+            xs.append(x)
 
-            t = np.zeros((1))
-            if 'akahara' in path:
-                t = np.array((0), dtype=np.int)
-            elif 'madara' in path:
-                t = np.array((1), dtype=np.int)
-            ts = np.r_[ts, t]
+            gt_path = path.replace("images", "seg_images").replace(".jpg", ".png")
+            gt = cv2.imread(gt_path)
+            gt = cv2.resize(gt, (out_width, out_height), interpolation=cv2.INTER_NEAREST)
 
+            t = np.zeros((out_height, out_width), dtype=np.int)
+
+            for i, (_, vs) in enumerate(CLS.items()):
+                ind = (gt[...,0] == vs[0]) * (gt[...,1] == vs[1]) * (gt[...,2] == vs[2])
+                t[ind] = i + 1
+
+            #print(gt_path)
+            #import matplotlib.pyplot as plt
+            #plt.imshow(t, cmap='gray')
+            #plt.show()
+
+            ts.append(t)
+            
             paths.append(path)
 
             if hf:
-                xs = np.r_[xs, x[:, ::-1][None, ...]]
-                ts = np.r_[ts, t]
+                xs.append(x[:, ::-1])
+                ts.append(t[:, ::-1])
                 paths.append(path)
 
             if vf:
-                xs = np.r_[xs, x[::-1][None, ...]]
-                ts = np.r_[ts, t]
+                xs.append(x[::-1])
+                ts.append(t[::-1])
                 paths.append(path)
 
             if hf and vf:
-                xs = np.r_[xs, x[::-1, ::-1][None, ...]]
-                ts = np.r_[ts, t]
+                xs.append(x[::-1, ::-1])
+                ts.append(t[::-1, ::-1])
                 paths.append(path)
+
+    xs = np.array(xs)
+    ts = np.array(ts)
 
     xs = xs.transpose(0,3,1,2)
 
@@ -136,12 +102,12 @@ def train():
     
     opt = chainer.optimizers.MomentumSGD(0.01, momentum=0.9)
     opt.setup(model)
-    opt.add_hook(chainer.optimizer.WeightDecay(0.0005))
+    #opt.add_hook(chainer.optimizer.WeightDecay(0.0005))
 
-    xs, ts, _ = data_load('../Dataset/train/images/', hf=True, vf=True)
+    xs, ts, paths = data_load('../Dataset/train/images/', hf=True, vf=True)
 
     # training
-    mb = 8
+    mb = 4
     mbi = 0
     train_ind = np.arange(len(xs))
     np.random.seed(0)
@@ -169,6 +135,10 @@ def train():
 
         y = model(x)
 
+        #accu = F.accuracy(y, t[..., 0])
+        y = F.transpose(y, axes=(0,2,3,1))
+        y = F.reshape(y, [-1, num_classes+1])
+        t = F.reshape(t, [-1])
         loss = F.softmax_cross_entropy(y, t)
         accu = F.accuracy(y, t)
 
@@ -203,20 +173,38 @@ def test():
         x = xs[i]
         t = ts[i]
         path = paths[i]
-        x = np.expand_dims(x, axis=0)
         
+        x = np.expand_dims(x, axis=0)
         if GPU >= 0:
             x = chainer.cuda.to_gpu(x)
-            
-        pred = model(x).data
-        pred = F.softmax(pred)
 
+        pred = model(x)
+
+        pred = F.transpose(pred, axes=(0,2,3,1))
+        pred = F.reshape(pred, [-1, num_classes+1])
+        pred = F.softmax(pred)
+        pred = F.reshape(pred, [-1, out_height, out_width, num_classes+1])
+        
         if GPU >= 0:
             pred = chainer.cuda.to_cpu(pred)
-                
-        pred = pred[0].data
-                
-        print("in {}, predicted probabilities >> {}".format(path, pred))
+        pred = pred.data[0]
+        pred = pred.argmax(axis=-1)
+
+        # visualize
+        out = np.zeros((out_height, out_width, 3), dtype=np.uint8)
+        for i, (_, vs) in enumerate(CLS.items()):
+            out[pred == (i+1)] = vs
+        
+        x = chainer.cuda.to_cpu(x) if GPU >= 0 else x
+        plt.subplot(1,2,1)
+        plt.imshow(x[0].transpose(1,2,0))
+        plt.title("input")
+        plt.subplot(1,2,2)
+        plt.imshow(out[..., ::-1])
+        plt.title("predicted")
+        plt.show()
+
+        print("in {}".format(path))
     
 
 def arg_parse():

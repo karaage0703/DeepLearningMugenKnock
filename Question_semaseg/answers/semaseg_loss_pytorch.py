@@ -19,8 +19,8 @@ class Mynet(torch.nn.Module):
         for i in range(6):
             f = 3 if i == 0 else 32
             enc1.append(torch.nn.Conv2d(f, 32, kernel_size=3, padding=1, stride=1))
-            enc1.append(torch.nn.BatchNorm2d(32))
             enc1.append(torch.nn.ReLU())
+            enc1.append(torch.nn.BatchNorm2d(32))
         self.enc1 = torch.nn.Sequential(*enc1)
 
         self.out = torch.nn.Conv2d(32, num_classes+1, kernel_size=1, padding=0, stride=1)

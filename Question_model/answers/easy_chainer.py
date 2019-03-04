@@ -16,25 +16,34 @@ class Mynet(chainer.Chain):
         super(Mynet, self).__init__()
         with self.init_scope():
             # block conv1
-            self.conv1 = []
+            self.conv1 = chainer.Sequential()
             for i in range(2):
                 self.conv1.append(L.Convolution2D(None, 64, ksize=3, pad=1, stride=1, nobias=False))
+                self.conv1.append(F.relu)
+                
             # block conv2
-            self.conv2 = []
+            self.conv2 = chainer.Sequential()
             for i in range(2):
                 self.conv2.append(L.Convolution2D(None, 128, ksize=3, pad=1, stride=1, nobias=False))
+                self.conv2.append(F.relu)
+                
             # block conv3
-            self.conv3 = []
+            self.conv3 = chainer.Sequential()
             for i in range(3):
                 self.conv3.append(L.Convolution2D(None, 256, ksize=3, pad=1, stride=1, nobias=False))
+                self.conv3.append(F.relu)
+                
             # block conv4
-            self.conv4 = []
+            self.conv4 = chainer.Sequential()
             for i in range(3):
                 self.conv4.append(L.Convolution2D(None, 512, ksize=3, pad=1, stride=1, nobias=False))
+                self.conv4.append(F.relu)
+                
             # block conv1
-            self.conv5 = []
+            self.conv5 = chainer.Sequential()
             for i in range(3):
                 self.conv5.append(L.Convolution2D(None, 512, ksize=3, pad=1, stride=1, nobias=False))
+                self.conv5.append(F.relu)
             
             self.fc1 = L.Linear(None, 4096, nobias=False)
             self.fc2 = L.Linear(None, 4096, nobias=False)
@@ -42,28 +51,23 @@ class Mynet(chainer.Chain):
 
     def __call__(self, x):
         # block conv1
-        for layer in self.conv1:
-            x = F.relu(layer(x))
+        x = self.conv1(x)
         x = F.max_pooling_2d(x, ksize=2, stride=2)
         
         # block conv2
-        for layer in self.conv2:
-            x = F.relu(layer(x))
+        x = self.conv2(x)
         x = F.max_pooling_2d(x, ksize=2, stride=2)
 
         # block conv3
-        for layer in self.conv3:
-            x = F.relu(layer(x))
+        x = self.conv3(x)
         x = F.max_pooling_2d(x, ksize=2, stride=2)
 
         # block conv4
-        for layer in self.conv4:
-            x = F.relu(layer(x))
+        x = self.conv4(x)
         x = F.max_pooling_2d(x, ksize=2, stride=2)
 
         # block conv5
-        for layer in self.conv5:
-            x = F.relu(layer(x))
+        x = self.conv5(x)
         x = F.max_pooling_2d(x, ksize=2, stride=2)
 
         x = F.relu(self.fc1(x))

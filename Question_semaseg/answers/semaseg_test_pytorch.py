@@ -4,6 +4,7 @@ import argparse
 import cv2
 import numpy as np
 from glob import glob
+import matplotlib.pyplot as plt
 
 num_classes = 2
 img_height, img_width = 64, 64#572, 572
@@ -19,8 +20,8 @@ class Mynet(torch.nn.Module):
         for i in range(6):
             f = 3 if i == 0 else 32
             enc1.append(torch.nn.Conv2d(f, 32, kernel_size=3, padding=1, stride=1))
-            enc1.append(torch.nn.BatchNorm2d(32))
             enc1.append(torch.nn.ReLU())
+            enc1.append(torch.nn.BatchNorm2d(32))
         self.enc1 = torch.nn.Sequential(*enc1)
 
         self.out = torch.nn.Conv2d(32, num_classes+1, kernel_size=1, padding=0, stride=1)
@@ -58,7 +59,7 @@ def data_load(path, hf=False, vf=False):
 
             for i, (_, vs) in enumerate(CLS.items()):
                 ind = (gt[...,0] == vs[0]) * (gt[...,1] == vs[1]) * (gt[...,2] == vs[2])
-                t[ind] = i + 1
+                t[ind] = i+1
             #print(gt_path)
             #import matplotlib.pyplot as plt
             #plt.subplot(1,2,1)
@@ -174,15 +175,14 @@ def test():
         out = np.zeros((out_height, out_width, 3), dtype=np.uint8)
         for i, (_, vs) in enumerate(CLS.items()):
             out[pred == (i+1)] = vs
+
+        print("in {}".format(path))
         
-        import matplotlib.pyplot as plt
         plt.subplot(1,2,1)
         plt.imshow(x.detach().cpu().numpy()[0].transpose(1,2,0))
         plt.subplot(1,2,2)
         plt.imshow(out[..., ::-1])
         plt.show()
-
-        print("in {}".format(path))
     
 
 def arg_parse():

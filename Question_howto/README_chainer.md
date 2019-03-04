@@ -373,3 +373,41 @@ $ python main_chainer.py --train
 ```bash
 $ python main_chainer.py --test
 ```
+
+
+## エラー&警告
+
+### Waring: Please be aware that Mac OS X is not an officially supported OS.
+
+MacOSXでchainerをimportするとでるwarning。
+
+まずはbrewでopenblasをインストール
+
+```bash
+$ brew install openblas
+```
+
+そしたら一度numpyをアンインストール
+
+```bash
+$ pip uninstall numpy
+```
+
+ホームに *.numpy-site.cfg* という名前のファイルを作成して、以下を書き込む。
+
+```bash
+[openblas]
+libraries = openblas
+library_dirs = /usr/local/opt/openblas/lib
+include_dirs = /usr/local/opt/openblas/include
+```
+
+次のコマンドでnumpyをインストールする
+
+```bash
+$ pip install --no-binary :all: numpy
+```
+これでwarningがでなくなる。
+
+参考 >> https://docs.chainer.org/en/stable/tips.html
+

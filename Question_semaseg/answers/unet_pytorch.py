@@ -4,11 +4,12 @@ import argparse
 import cv2
 import numpy as np
 from glob import glob
+import matplotlib.pyplot as plt
 
 num_classes = 2
-img_height, img_width = 572, 572#572, 572
-out_height, out_width = 388, 388#388, 388
-GPU = True
+img_height, img_width = 236, 236 #572, 572
+out_height, out_width = 52, 52 #388, 388
+GPU = False
 torch.manual_seed(0)
 
 
@@ -24,87 +25,85 @@ class Mynet(torch.nn.Module):
     def __init__(self):
         super(Mynet, self).__init__()
 
-        enc1 = []
-        for i in range(2):
-            f = 3 if i == 0 else 64
-            enc1.append(torch.nn.Conv2d(f, 64, kernel_size=3, padding=0, stride=1))
-            enc1.append(torch.nn.BatchNorm2d(64))
-            enc1.append(torch.nn.ReLU())
-        self.enc1 = torch.nn.Sequential(*enc1)
+        base = 64
 
-        enc2 = []
+        self.enc1 = torch.nn.Sequential()
         for i in range(2):
-            f = 64 if i == 0 else 128
-            enc2.append(torch.nn.Conv2d(f, 128, kernel_size=3, padding=0, stride=1))
-            enc2.append(torch.nn.BatchNorm2d(128))
-            enc2.append(torch.nn.ReLU())
-        self.enc2 = torch.nn.Sequential(*enc2)
+            f = 3 if i == 0 else base
+            self.enc1.add_module("enc1_{}".format(i+1), torch.nn.Conv2d(f, base, kernel_size=3, padding=0, stride=1))
+            self.enc1.add_module("enc1_relu_{}".format(i+1), torch.nn.ReLU())
+            self.enc1.add_module("enc1_bn_{}".format(i+1), torch.nn.BatchNorm2d(base))
 
-        enc3 = []
+        self.enc2 = torch.nn.Sequential()
         for i in range(2):
-            f = 128 if i == 0 else 256
-            enc3.append(torch.nn.Conv2d(f, 256, kernel_size=3, padding=0, stride=1))
-            enc3.append(torch.nn.BatchNorm2d(256))
-            enc3.append(torch.nn.ReLU())
-        self.enc3 = torch.nn.Sequential(*enc3)
+            f = base if i == 0 else base*2
+            self.enc2.add_module("enc2_{}".format(i+1), torch.nn.Conv2d(f, base*2, kernel_size=3, padding=0, stride=1))
+            self.enc2.add_module("enc2_relu_{}".format(i+1), torch.nn.ReLU())
+            self.enc2.add_module("enc2_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*2))
 
-        enc4 = []
+        self.enc3 = torch.nn.Sequential()
         for i in range(2):
-            f = 256 if i == 0 else 512
-            enc4.append(torch.nn.Conv2d(f, 512, kernel_size=3, padding=0, stride=1))
-            enc4.append(torch.nn.BatchNorm2d(512))
-            enc4.append(torch.nn.ReLU())
-        self.enc4 = torch.nn.Sequential(*enc4)
+            f = base*2 if i == 0 else base*4
+            self.enc3.add_module("enc3_{}".format(i+1), torch.nn.Conv2d(f, base*4, kernel_size=3, padding=0, stride=1))
+            self.enc3.add_module("enc3_relu_{}".format(i+1), torch.nn.ReLU())
+            self.enc3.add_module("enc3_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*4))
 
-        enc5 = []
+        self.enc4 = torch.nn.Sequential()
         for i in range(2):
-            f = 512 if i == 0 else 1024
-            enc5.append(torch.nn.Conv2d(f, 1024, kernel_size=3, padding=0, stride=1))
-            enc5.append(torch.nn.BatchNorm2d(1024))
-            enc5.append(torch.nn.ReLU())
-        self.enc5 = torch.nn.Sequential(*enc5)
+            f = base*4 if i == 0 else base*8
+            self.enc4.add_module("enc4_{}".format(i+1), torch.nn.Conv2d(f, base*8, kernel_size=3, padding=0, stride=1))
+            self.enc4.add_module("enc4_relu_{}".format(i+1), torch.nn.ReLU())
+            self.enc4.add_module("enc4_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*8))
 
-        self.tconv4 = torch.nn.ConvTranspose2d(1024, 512, kernel_size=2, stride=2)
-        self.tconv4_bn = torch.nn.BatchNorm2d(512)
-        dec4 = []
+        self.enc5 = torch.nn.Sequential()
         for i in range(2):
-            f = 1024 if i == 0 else 512
-            dec4.append(torch.nn.Conv2d(f, 512, kernel_size=3, padding=0, stride=1))
-            dec4.append(torch.nn.BatchNorm2d(512))
-            dec4.append(torch.nn.ReLU())
-        self.dec4 = torch.nn.Sequential(*dec4)
+            f = base*8 if i == 0 else base*16
+            self.enc5.add_module("enc5_{}".format(i+1), torch.nn.Conv2d(f, base*16, kernel_size=3, padding=0, stride=1))
+            self.enc5.add_module("enc5_relu_{}".format(i+1), torch.nn.ReLU())
+            self.enc5.add_module("enc5_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*16))
 
-        self.tconv3 = torch.nn.ConvTranspose2d(512, 256, kernel_size=2, stride=2)
-        self.tconv3_bn = torch.nn.BatchNorm2d(256)
-        dec3 = []
+        self.tconv4 = torch.nn.ConvTranspose2d(base*16, base*8, kernel_size=2, stride=2)
+        self.tconv4_bn = torch.nn.BatchNorm2d(base*8)
+
+        self.dec4 = torch.nn.Sequential()
         for i in range(2):
-            f = 512 if i == 0 else 256
-            dec3.append(torch.nn.Conv2d(f, 256, kernel_size=3, padding=0, stride=1))
-            dec3.append(torch.nn.BatchNorm2d(256))
-            dec3.append(torch.nn.ReLU())
-        self.dec3 = torch.nn.Sequential(*dec3)
+            f = base*16 if i == 0 else base*8
+            self.dec4.add_module("dec4_{}".format(i+1), torch.nn.Conv2d(f, base*8, kernel_size=3, padding=0, stride=1))
+            self.dec4.add_module("dec4_relu_{}".format(i+1), torch.nn.ReLU())
+            self.dec4.add_module("dec4_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*8))
+        
 
-        self.tconv2 = torch.nn.ConvTranspose2d(256, 128, kernel_size=2, stride=2)
-        self.tconv2_bn = torch.nn.BatchNorm2d(128)
-        dec2 = []
+        self.tconv3 = torch.nn.ConvTranspose2d(base*8, base*4, kernel_size=2, stride=2)
+        self.tconv3_bn = torch.nn.BatchNorm2d(base*4)
+
+        self.dec3 = torch.nn.Sequential()
         for i in range(2):
-            f = 256 if i == 0 else 128
-            dec2.append(torch.nn.Conv2d(f, 128, kernel_size=3, padding=0, stride=1))
-            dec2.append(torch.nn.BatchNorm2d(128))
-            dec2.append(torch.nn.ReLU())
-        self.dec2 = torch.nn.Sequential(*dec2)
+            f = base*8 if i == 0 else base*4
+            self.dec3.add_module("dec3_{}".format(i+1), torch.nn.Conv2d(f, base*4, kernel_size=3, padding=0, stride=1))
+            self.dec3.add_module("dec3_relu_{}".format(i+1), torch.nn.ReLU())
+            self.dec3.add_module("dec3_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*4))
 
-        self.tconv1 = torch.nn.ConvTranspose2d(128, 64, kernel_size=2, stride=2)
-        self.tconv1_bn = torch.nn.BatchNorm2d(64)
-        dec1 = []
+        self.tconv2 = torch.nn.ConvTranspose2d(base*4, base*2, kernel_size=2, stride=2)
+        self.tconv2_bn = torch.nn.BatchNorm2d(base*2)
+
+        self.dec2 = torch.nn.Sequential()
         for i in range(2):
-            f = 128 if i == 0 else 64
-            dec1.append(torch.nn.Conv2d(f, 64, kernel_size=3, padding=0, stride=1))
-            dec1.append(torch.nn.BatchNorm2d(64))
-            dec1.append(torch.nn.ReLU())
-        self.dec1 = torch.nn.Sequential(*dec1)
+            f = base*4 if i == 0 else base*2
+            self.dec2.add_module("dec2_{}".format(i+1), torch.nn.Conv2d(f, base*2, kernel_size=3, padding=0, stride=1))
+            self.dec2.add_module("dec2_relu_{}".format(i+1), torch.nn.ReLU())
+            self.dec2.add_module("dec2_bn_{}".format(i+1), torch.nn.BatchNorm2d(base*2))
 
-        self.out = torch.nn.Conv2d(64, num_classes+1, kernel_size=1, padding=0, stride=1)
+        self.tconv1 = torch.nn.ConvTranspose2d(base*2, base, kernel_size=2, stride=2)
+        self.tconv1_bn = torch.nn.BatchNorm2d(base)
+
+        self.dec1 = torch.nn.Sequential()
+        for i in range(2):
+            f = base*2 if i == 0 else base
+            self.dec1.add_module("dec1_{}".format(i+1), torch.nn.Conv2d(f, base, kernel_size=3, padding=0, stride=1))
+            self.dec1.add_module("dec1_relu_{}".format(i+1), torch.nn.ReLU())
+            self.dec1.add_module("dec1_bn_{}".format(i+1), torch.nn.BatchNorm2d(base))
+
+        self.out = torch.nn.Conv2d(base, num_classes+1, kernel_size=1, padding=0, stride=1)
         
         
     def forward(self, x):
@@ -158,8 +157,8 @@ CLS = {'akahara': [0,0,128],
     
 # get train data
 def data_load(path, hf=False, vf=False):
-    xs = np.ndarray((0, img_height, img_width, 3), dtype=np.float32)
-    ts = np.ndarray((0, out_height, out_width), dtype=np.int)
+    xs = []
+    ts = []
     paths = []
     
     for dir_path in glob(path + '/*'):
@@ -167,7 +166,8 @@ def data_load(path, hf=False, vf=False):
             x = cv2.imread(path)
             x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
             x /= 255.
-            xs = np.r_[xs, x[None, ...]]
+            x = x[..., ::-1]
+            xs.append(x)
 
             gt_path = path.replace("images", "seg_images").replace(".jpg", ".png")
             gt = cv2.imread(gt_path)
@@ -183,27 +183,30 @@ def data_load(path, hf=False, vf=False):
             #plt.imshow(t)
             #plt.show()
 
-            ts = np.r_[ts, t[None, ...]]
+            ts.append(t)
             
             paths.append(path)
 
             if hf:
-                xs = np.r_[xs, x[:, ::-1][None, ...]]
-                ts = np.r_[ts, t[:, ::-1][None, ...]]
+                xs.append(x[:, ::-1])
+                ts.append(t[:, ::-1])
                 paths.append(path)
 
             if vf:
-                xs = np.r_[xs, x[::-1][None, ...]]
-                ts = np.r_[ts, t[::-1][None, ...]]
+                xs.append(x[::-1])
+                ts.append(t[::-1])
                 paths.append(path)
 
             if hf and vf:
-                xs = np.r_[xs, x[::-1, ::-1][None, ...]]
-                ts = np.r_[ts, t[::-1, ::-1][None, ...]]
+                xs.append(x[::-1, ::-1])
+                ts.append(t[::-1, ::-1])
                 paths.append(path)
 
-    xs = xs.transpose(0,3,1,2)
+    xs = np.array(xs)
+    ts = np.array(ts)
 
+    xs = xs.transpose(0,3,1,2)
+    
     return xs, ts, paths
 
 
@@ -226,7 +229,7 @@ def train():
     np.random.seed(0)
     np.random.shuffle(train_ind)
     
-    for i in range(1000):
+    for i in range(100):
         if mbi + mb > len(xs):
             mb_ind = train_ind[mbi:]
             np.random.shuffle(train_ind)
@@ -287,15 +290,14 @@ def test():
         out = np.zeros((out_height, out_width, 3), dtype=np.uint8)
         for i, (_, vs) in enumerate(CLS.items()):
             out[pred == (i+1)] = vs
+
+        print("in {}".format(path))
         
-        import matplotlib.pyplot as plt
         plt.subplot(1,2,1)
-        plt.imshow(x.detach().cpu().numpy()[0].transpose(1,2,0)[...,::-1])
+        plt.imshow(x.detach().cpu().numpy()[0].transpose(1,2,0))
         plt.subplot(1,2,2)
         plt.imshow(out[..., ::-1])
         plt.show()
-
-        print("in {}".format(path))
     
 
 def arg_parse():

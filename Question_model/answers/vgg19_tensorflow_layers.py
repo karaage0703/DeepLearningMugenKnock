@@ -173,7 +173,9 @@ def test():
             
             x = np.expand_dims(x, axis=0)
 
-            pred = out.eval(feed_dict={X: x, keep_prob: 1.0})[0]
+            pred = sess.run([pred_prob], feed_dict={X:x, keep_prob:1.})[0]
+            pred = pred[0]
+            #pred = out.eval(feed_dict={X: x, keep_prob: 1.0})[0]
 
             print("in {}, predicted probabilities >> {}".format(path, pred))
     

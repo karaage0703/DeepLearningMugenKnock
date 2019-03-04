@@ -59,3 +59,13 @@ CPUでの計算時間の速さでいうと、体感的に **Tensorflow, Keras(Te
 ## 5. Chainerの使い方
 
 [README_chainer.md](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_howto/README_chaienr.md)
+
+## 6. Caffeの使い方
+
+Caffeはインストールのハードルが高いので注意。インストールではDockerでUbuntuを使うのがおすすめ。
+
+インストール
+
+- Docker環境 >> [README_caffe_install_docker.md](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_howto/README_caffe_install_docker.md)
+- Native環境 >> [README_caffe_install_native.md](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_howto/README_caffe_install_native.md)
+

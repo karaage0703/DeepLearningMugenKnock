@@ -44,6 +44,34 @@ img_height, img_width = 64, 64
 
 ## 2. モデル定義
 
+### tf.contrib.slimを使う方法
+
+参照 >> https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim
+
+最近開発元が押しているslimライブラリを使えば、結構らくちんに書ける。*with slim.arg_scope* を使えばscope下にあるconv2d全部にtf.nn.reluを適用させたりができてとても便利。注意なのが、batch_norm を使うときは、引数の *is_training* をテスト時もTrueにしておかないとなぜか結果がだめになる。
+
+```python
+def Mynet(x, train=False):
+
+    with slim.arg_scope([slim.conv2d, slim.fully_connected],
+                        activation_fn=tf.nn.relu,
+                        weights_initializer=tf.truncated_normal_initializer(0., 0.01)):
+        x = slim.conv2d(x, 64, [3,3], scope='conv1')
+        x = slim.batch_norm(x, is_training=train, scope='bn1')
+        x = slim.max_pool2d(x, [2,2], scope='pool1')
+        x = slim.conv2d(x, 64, [3,3], scope='conv2')
+        x = slim.batch_norm(x, is_training=train, scope='bn2')
+        x = slim.max_pool2d(x, [2,2], scope='pool2')
+        x = slim.flatten(x)
+        x = slim.fully_connected(x, 256, scope='fc1')
+        x = slim.dropout(x, 0.25, scope='drop1')
+        x = slim.fully_connected(x, 256, scope='fc2')
+        x = slim.dropout(x, 0.25, scope='drop2')
+        x = slim.fully_connected(x, num_classes, scope='fc_cls')
+
+    return x
+```
+
 ### tensorflow内のライブラリを使う方法
 
 *tensorflow.layers* の中にlayerがすでに用意されている。
@@ -307,7 +335,7 @@ out = tf.nn.softmax(logits)
 xs, ts, paths = data_load('../Dataset/test/images/')
 ```
 
-あとはテスト画像を一枚ずつモデルにフィードフォワードして予測ラベルを求めていく。これもsession内で行わなければいけない。学習済みモデルの読み込みもsession内でやる必要がある。それはsaver.restor()を使う。
+あとはテスト画像を一枚ずつモデルにフィードフォワードして予測ラベルを求めていく。これもsession内で行わなければいけない。学習済みモデルの読み込みもsession内でやる必要がある。それはsaver.restor()を使う。モデルの出力を得るには、*out.eval()* とするか、*sess.run()* を使うかの２通りがある。
 
 ```python
 config = tf.ConfigProto()
@@ -324,7 +352,8 @@ with tf.Session(config=config) as sess:
     
         x = np.expand_dims(x, axis=0)
 
-        pred = out.eval(feed_dict={X: x, keep_prob: 1.0})[0]
+        pred = sess.run([out], feed_dect={X:x, keep_prob:1.})[0]
+        #pred = out.eval(feed_dict={X: x, keep_prob: 1.0})[0]
 
         print("in {}, predicted probabilities >> {}".format(path, pred))
 ```
@@ -336,11 +365,12 @@ with tf.Session(config=config) as sess:
 
 以上をまとめたコードは *main_tensorflow_@@@.py*　です。使いやすさのために少し整形してます。
 
-tensorflow.layersを使うときは*main_tensorflow_layers.py* 、自分でlayerを定義するときは*main_tensorflow_raw.py*
+slimを使うときは *main_tensorflow_slim.py* 、 tensorflow.layersを使うときは*main_tensorflow_layers.py* 、自分でlayerを定義するときは*main_tensorflow_raw.py*
 
 学習は
 
 ```bash
+$ python main_tensorflow_slim.py --train
 $ python main_tensorflow_layers.py --train
 $ python main_tensorflow_raw.py --train
 ```
@@ -348,6 +378,7 @@ $ python main_tensorflow_raw.py --train
 テストは
 
 ```bash
+$ python main_tensorflow_slim.py --test
 $ python main_tensorflow_layers.py --test
 $ python main_tensorflow_raw.py --test
 ```
