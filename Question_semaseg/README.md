@@ -155,7 +155,7 @@ pytorchやchainerは[ミニバッチ、チャネル、高さ、幅]のshapeだ�
 
 これはPyTorchの出力例。
 
-| madara_0010.jpg (answers/answer_semaseg_loss_pytorch_madara_0010.png) | akahara_0011.jpg (answers/answer_semaseg_loss_pytorch_akahara_0011.png) |
+| answer_semaseg_loss_pytorch_madara_0010.png | answer_semaseg_loss_pytorch_akahara_0011.png |
 |:---:|:---:|
 | ![](answers/answer_semaseg_loss_pytorch_madara_0010.png) | ![](answers/answer_semaseg_loss_pytorch_akahara_0011.png) |
 
@@ -191,7 +191,7 @@ Nearest Neighborの方法
 
 これはPyTorchの出力例。
 
-| madara_0010.jpg (answers/answer_nearest_pytorch_madara_0010.png) | akahara_0011.jpg (answers/answer_nearest_pytorch_akahara_0011.png) |
+| answer_nearest_pytorch_madara_0010.png | answer_nearest_pytorch_akahara_0011.png |
 |:---:|:---:|
 | ![](answers/answer_nearest_pytorch_madara_0010.png) | ![](answers/answer_nearest_pytorch_akahara_0011.png) |
 
@@ -218,7 +218,7 @@ Transposed convolutionの方法
 | pytorch | torch.nn.ConvTranspose2d | | Keras | keras.layers.Conv2DTranspose |
 | TensorFlow | slim.conv2d_transpose | | Chainer | chainer.links.Deconvolution2D (なぜかchainerはdeconvolutionの名前) |
 
-| madara_0010.jpg (answers/answer_transposeconv_pytorch_madara_0010.png) | akahara_0011.jpg (answers/answer_transposeconv_pytorch_akahara_0011.png) |
+| answer_transposeconv_pytorch_madara_0010.png | answer_transposeconv_pytorch_akahara_0011.png |
 |:---:|:---:|
 | ![](answers/answer_transposeconv_pytorch_madara_0010.png) | ![](answers/answer_transposeconv_pytorch_akahara_0011.png) |
 
@@ -373,7 +373,7 @@ _enc3 = crop_layer(enc3, dec3.shape)
 
 UNetからの変更点は２つ。１つはconvolutionのpaddingを1にしたこと、もう１つはカーネル数を1/4にしたこと。これなら入力サイズと出力サイズが同じになるので、ある程度使いやすくなったはずです。このように自分で論文の実装から少し変えることも重要です。入力サイズを64にしてやってみましょう。学習率などは自分でいろいろ試してきれいにセグメンテーションできるハイパーパラメータを探してみてください。
 
-| madara_0010.jpg (answers/answer_unetlike_pytorch_madara_0010.png) | akahara_0011.jpg (answers/answer_unertlike_pytorch_akahara_0011.png) |
+| answer_unetlike_pytorch_madara_0010.png | answer_unertlike_pytorch_akahara_0011.png |
 |:---:|:---:|
 | ![](answers/answer_unetlike_pytorch_madara_0010.png) | ![](answers/answer_unetlike_pytorch_akahara_0011.png) |
 
