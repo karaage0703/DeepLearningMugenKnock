@@ -10,7 +10,7 @@
 
 AEはよく2層ネットワークで表される。入力層、中間層(Encoder・エンコーダー)、出力層(Decoder・デコーダー)であり、出力が入力画像と同じになるように学習が行われます。中間層のユニット数は入力、出力のものよりずっと小さく、砂時計型である。これが特徴表現の次元圧縮を実現してます。
 
-![](ae.png)
+![](assets/ae.png)
 
 ここでは次の構造を取る。
 
@@ -65,14 +65,16 @@ GAN とは*Generateive Adversarial Networks* の略です。最近はこのGAN�
 
 GANはピクセルごとにLossを取るAutoEncoderとは違い、画像を非間接的にGeneratorに学習させるところが大きく違っていて、これが精度よくできるので、ものすごく注目されてます。なんできれいな画像ができるかが、論文中の数式で証明されています。（詳しくはわかりませんでしたが、どうやら生成したい画像の確率分布を学習できます的なことが書いてあるようでした。）今ではGANの派生として、pix2pixやBigGANなどきれいな画像をすごくきれいに生成できる手法があります。最近(2019.3.1)だと存在しない人の顔を作るサイトなんかもかなり話題になりました。
 
+![](assets/gan.png)
+
 なぜかGANの構造が論文に記載されていなくて、いろいろな人の実装を見るとこんな感じでした。生成したい画像サイズの縦をheight, 横をwidth, チャネル数をchannelとしてます。
 
 **Generator**
 
 1. Input = 100
-2. MLP(256) + LeakyReLU(alpha=0.2) + BN
-3. MLP(512) + LeakyReLU(alpha=0.2) + BN
-4. MLP(1024) + LeakyReLU(alpha=0.2) + BN
+2. MLP(128) + LeakyReLU(alpha=0.2)
+3. MLP(256) + LeakyReLU(alpha=0.2)
+4. MLP(512) + LeakyReLU(alpha=0.2)
 5. MLP(height x width x channel) + sigmoid
 
 **Disciminator**
@@ -81,17 +83,19 @@ GANはピクセルごとにLossを取るAutoEncoderとは違い、画像を非�
 3. MLP(256) + LeakyReLU(alpha=0.2)
 4. MLP(1) + sigomid
 
+GANの出力
+![](answers/gan_keras.png)
+
 ちなみにGAN系は収束がくそ難しいことでも有名です。GANの学習ノウハウだけで論文が出てるほどです。なので、各種パラメータ調整はかなり厳しい戦いになると思います。がんばりましょう。僕もがんばりました(´；ω；｀)
 
 答え
-- Pytorch [answers/lenet_pytorch.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_pytorch.py)
-- Keras [answers/lenet_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_keras.py)
+- Keras [answers/gan_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/gan_keras.py)
 
 ## DCGAN
 
 論文 >> https://arxiv.org/abs/1511.06434
 
-GANの進化版、DCGAN (Deep Convolutional GAN)。GANはMulti layer perceptronだけの構成でしたが、DCGANではconvolution層などを入れてきれいな画像が生成できるようになりました。
+GANの進化版、DCGAN (Deep Convolutional GAN)。GANはMulti layer perceptronだけの構成でしたが、DCGANではconvolutionやBNなどを入れてきれいな画像が生成できるようになりました。
 
 この論文はどっちかというとGANを学習させるコツが多く書かれています。
 
@@ -100,7 +104,7 @@ GANの進化版、DCGAN (Deep Convolutional GAN)。GANはMulti layer perceptron�
 **Generator**
 
 1. Input = 100
-2. Dense( (height/16) x (width/16) x 512) + ReLU + BN
+2. Dense( (height/16) x (width/16) x 256) + ReLU + BN
 3. TransposedConv(kernel_size=(5,5), kernel_num=512, strides=2) + ReLU + BN
 3. TransposedConv(kernel_size=(5,5), kernel_num=256, strides=2) + ReLU + BN
 3. TransposedConv(kernel_size=(5,5), kernel_num=128, strides=2) + ReLU + BN
@@ -113,3 +117,9 @@ GANの進化版、DCGAN (Deep Convolutional GAN)。GANはMulti layer perceptron�
 2. Conv(kernel_size=(5,5), kernel_num=128, stride=2) + LeakyReLU(alpha=0.2)
 2. Conv(kernel_size=(5,5), kernel_num=256, stride=2) + LeakyReLU(alpha=0.2)
 4. MLP(1) + sigomid
+
+DCGANの出力
+![](answers/dcgan_keras.png)
+
+答え
+- Keras [answers/dcgan_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/dcgan_keras.py)

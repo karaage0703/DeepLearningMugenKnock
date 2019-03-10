@@ -24,20 +24,15 @@ num_classes = 2
 img_height, img_width = 64, 64 #572, 572
 channel = 3
 
-from keras.regularizers import l1_l2
-
 def G_model(Height, Width, channel=3):
     inputs = Input((100,))
-    x = Dense(128, kernel_regularizer=l1_l2(1e-5, 1e-5), name='g_dense1')(inputs)
+    x = Dense(128, name='g_dense1')(inputs)
     x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dense(256, kernel_regularizer=l1_l2(1e-5, 1e-5), name='g_dense2')(x)
+    x = Dense(256, name='g_dense2')(x)
     x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dense(512, kernel_regularizer=l1_l2(1e-5, 1e-5), name='g_dense3')(x)
+    x = Dense(512, name='g_dense3')(x)
     x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
-    x = Dense(Height * Width * channel, activation='sigmoid', kernel_regularizer=l1_l2(1e-5, 1e-5), name='g_out')(x)
+    x = Dense(Height * Width * channel, activation='tanh', name='g_out')(x)
     x = Reshape((Height, Width, channel))(x)
     model = Model(inputs, x, name='G')
     return model
@@ -45,11 +40,11 @@ def G_model(Height, Width, channel=3):
 def D_model(Height, Width, channel=3):
     inputs = Input((Height, Width, channel))
     x = Flatten()(inputs)
-    x = Dense(512, kernel_regularizer=l1_l2(1e-5, 1e-5), name='d_dense1')(x)
+    x = Dense(512, name='d_dense1')(x)
     x = LeakyReLU(alpha=0.2)(x)
-    x = Dense(256, kernel_regularizer=l1_l2(1e-5, 1e-5), name='d_dense2')(x)
+    x = Dense(256, name='d_dense2')(x)
     x = LeakyReLU(alpha=0.2)(x)
-    x = Dense(1, kernel_regularizer=l1_l2(1e-5, 1e-5), activation='sigmoid', name='d_out')(x)
+    x = Dense(1, activation='sigmoid', name='d_out')(x)
     model = Model(inputs, x, name='D')
     return model
 
@@ -142,27 +137,27 @@ def train():
     #g_opt = keras.optimizers.SGD(lr=0.0002, momentum=0.3, decay=1e-5)
     #d_opt = keras.optimizers.SGD(lr=0.0002, momentum=0.1, decay=1e-5)
 
-    g.compile(loss='binary_crossentropy', optimizer='SGD')
-    d.trainable = False
-    for layer in d.layers:
-        layer.trainable = False
-    gan.compile(loss='binary_crossentropy', optimizer=g_opt)
-
     d.trainable = True
     for layer in d.layers:
         layer.trainable = True
     d.compile(loss='binary_crossentropy', optimizer=d_opt)
+    g.compile(loss='binary_crossentropy', optimizer=d_opt)
+    d.trainable = False
+    for layer in d.layers:
+        layer.trainable = False
+    gan = Combined_model(g=g, d=d)
+    gan.compile(loss='binary_crossentropy', optimizer=g_opt)
 
     xs, paths = data_load('../Dataset/train/images/', hf=True, vf=True, rot=1)
 
     # training
-    mb = 64
+    mb = 32
     mbi = 0
     train_ind = np.arange(len(xs))
     np.random.seed(0)
     np.random.shuffle(train_ind)
     
-    for i in range(1000):
+    for i in range(5000):
         if mbi + mb > len(xs):
             mb_ind = train_ind[mbi:]
             np.random.shuffle(train_ind)
@@ -174,34 +169,39 @@ def train():
 
         x = xs[mb_ind]
 
-        input_noise = np.random.normal(0, 1, size=(mb, 100))
+        input_noise = np.random.uniform(-1, 1, size=(mb, 100))
         g_output = g.predict(input_noise, verbose=0)
         X = np.concatenate((x, g_output))
         Y = [1] * mb + [0] * mb
         d_loss = d.train_on_batch(X, Y)
         # Generator training
-        input_noise = np.random.normal(0, 1, size=(mb, 100))
+        input_noise = np.random.uniform(-1, 1, size=(mb, 100))
         g_loss = gan.train_on_batch(input_noise, [1] * mb)
 
         print("iter >>", i+1, ",g_loss >>", g_loss, ',d_loss >>', d_loss)
     
-    gan.save('model.h5')
+    g.save('model.h5')
 
 # test
 def test():
     # load trained model
     g = G_model(Height=img_height, Width=img_width, channel=channel)
-    g.load_weights('model.h5', by_name=True)
+    g.load_weights('../gan_model.h5', by_name=True)
 
+    np.random.seed(100)
+    
     for i in range(3):
-        input_noise = np.random.normal(0, 1, size=(9, 100))
+        input_noise = np.random.uniform(-1, 1, size=(9, 100))
         g_output = g.predict(input_noise, verbose=0)
+        g_output = (g_output + 1) / 2
 
         for i in range(9):
-            gen = g_output[i, ..., 0]
-            plt.subplot(3,3,i+1)
-            plt.imshow(gen, cmap='gray')
-
+            gen = g_output[i]
+            plt.subplot(1,9,i+1)
+            plt.imshow(gen)
+            plt.axis('off')
+            #plt.subplots_adjust(left=0, right=1, top=1, bottom=0, hspace=0, wspace=0)
+            
         plt.show()
 
     

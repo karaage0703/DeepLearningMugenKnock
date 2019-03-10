@@ -21,7 +21,7 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D, Input, BatchNormalization, Reshape, UpSampling2D, LeakyReLU, Conv2DTranspose
 
 num_classes = 2
-img_height, img_width = 32, 32 #572, 572
+img_height, img_width = 64, 64 #572, 572
 channel = 3
 
 from keras.regularizers import l1_l2
@@ -31,43 +31,31 @@ def G_model(Height, Width, channel=3):
     inputs = Input((100,))
     in_h = int(Height / 16)
     in_w = int(Width / 16)
-    d_dim = 64
-    base = 64
+    d_dim = 256
+    base = 128
     x = Dense(in_h * in_w * d_dim, name='g_dense1',
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(inputs)
     x = Reshape((in_h, in_w, d_dim), input_shape=(d_dim * in_h * in_w,))(x)
     x = Activation('relu')(x)
     x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='g_dense1_bn')(x)
     # 1/8
-    #x = UpSampling2D(size=(2, 2))(x)
     x = Conv2DTranspose(base*4, (5, 5), name='g_conv1', padding='same', strides=(2,2),
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(x)
-    #x = Conv2D(256, (5, 5), padding='same', name='g_conv1',
-    #    kernel_initializer=RN(mean=0.0, stddev=0.02), bias_initializer=Constant())(x)
     x = Activation('relu')(x)
     x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='g_conv1_bn')(x)
     # 1/4
-    #x = UpSampling2D(size=(2, 2))(x)
     x = Conv2DTranspose(base*2, (5, 5), name='g_conv2', padding='same', strides=(2,2),
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(x)
-    #x = Conv2D(128, (5, 5), padding='same', name='g_conv2',
-    #    kernel_initializer=RN(mean=0.0, stddev=0.02), bias_initializer=Constant())(x)
     x = Activation('relu')(x)
     x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='g_conv2_bn')(x)
     # 1/2
-    #x = UpSampling2D(size=(2, 2))(x)
     x = Conv2DTranspose(base, (5, 5), name='g_conv3', padding='same', strides=(2,2),
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(x)
-    #x = Conv2D(64, (5, 5), padding='same', name='g_conv3',
-    #    kernel_initializer=RN(mean=0.0, stddev=0.02), bias_initializer=Constant())(x)
     x = Activation('relu')(x)
     x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='g_conv3_bn')(x)
     # 1/1
-    #x = UpSampling2D(size=(2, 2))(x)
     x = Conv2DTranspose(channel, (5, 5), name='g_out', padding='same', strides=(2,2),
         kernel_initializer=RN(mean=0.0, stddev=0.02),  bias_initializer=Constant())(x)
-    #x = Conv2D(channel, (5, 5), padding='same', activation='tanh', name='g_out',
-    #    kernel_initializer=RN(mean=0.0, stddev=0.02), bias_initializer=Constant())(x)
     x = Activation('tanh')(x)
     model = Model(inputs=inputs, outputs=x, name='G')
     return model
@@ -78,22 +66,16 @@ def D_model(Height, Width, channel=3):
     x = Conv2D(base, (5, 5), padding='same', strides=(2,2), name='d_conv1',
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(inputs)
     x = LeakyReLU(alpha=0.2)(x)
-    #x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='d_conv1_bn')(x)
     x = Conv2D(base*2, (5, 5), padding='same', strides=(2,2), name='d_conv2',
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(x)
     x = LeakyReLU(alpha=0.2)(x)
-    #x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='d_conv2_bn')(x)
     x = Conv2D(base*4, (5, 5), padding='same', strides=(2,2), name='d_conv3',
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(x)
     x = LeakyReLU(alpha=0.2)(x)
-    #x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='d_conv3_bn')(x)
     x = Conv2D(base*8, (5, 5), padding='same', strides=(2,2), name='d_conv4',
         kernel_initializer=RN(mean=0.0, stddev=0.02), use_bias=False)(x)
     x = LeakyReLU(alpha=0.2)(x)
-    #x = BatchNormalization(momentum=0.9, epsilon=1e-5, name='d_conv4_bn')(x)
     x = Flatten()(x)
-    #x = Dense(4096, activation='relu', name='d_dense1',
-    #    kernel_initializer=RN(mean=0.0, stddev=0.02), bias_initializer=Constant())(x)
     x = Dense(1, activation='sigmoid', name='d_out',
         kernel_initializer=RN(mean=0.0, stddev=0.02), bias_initializer=Constant())(x)
     model = Model(inputs=inputs, outputs=x, name='D')
@@ -111,8 +93,9 @@ CLS = {'background': [0,0,0],
        'madara': [0,128,0]}
     
 # get train data
-def data_load(path, hf=False, vf=False):
+def data_load(path, hf=False, vf=False, rot=None):
     xs = []
+    ts = []
     paths = []
     
     for dir_path in glob(path + '/*'):
@@ -121,29 +104,58 @@ def data_load(path, hf=False, vf=False):
             if channel == 1:
                 x = cv2.cvtColor(x, cv2.COLOR_BGR2GRAY)
             x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
-            x /= 255.
+            x = x / 127.5 - 1
             if channel == 1:
-                x = np.expand_dims(x, axis=-1)
+                x = x[..., None]
             else:
                 x = x[..., ::-1]
             xs.append(x)
+
+            for i, cls in enumerate(CLS):
+                if cls in path:
+                    t = i
             
+            ts.append(t)
+
             paths.append(path)
 
             if hf:
                 xs.append(x[:, ::-1])
+                ts.append(t)
                 paths.append(path)
 
             if vf:
                 xs.append(x[::-1])
+                ts.append(t)
                 paths.append(path)
 
             if hf and vf:
                 xs.append(x[::-1, ::-1])
+                ts.append(t)
                 paths.append(path)
 
-    xs = np.array(xs)
-
+            if rot is not None:
+                angle = 0
+                scale = 1
+                while angle < 360:
+                    angle += rot
+                    _h, _w, _c = x.shape
+                    max_side = max(_h, _w)
+                    tmp = np.zeros((max_side, max_side, _c))
+                    tx = int((max_side - _w) / 2)
+                    ty = int((max_side - _h) / 2)
+                    tmp[ty: ty+_h, tx: tx+_w] = x.copy()
+                    M = cv2.getRotationMatrix2D((max_side/2, max_side/2), angle, scale)
+                    _x = cv2.warpAffine(tmp, M, (max_side, max_side))
+                    _x = _x[tx:tx+_w, ty:ty+_h]
+                    xs.append(x)
+                    ts.append(t)
+                    paths.append(path)
+                    
+    xs = np.array(xs, dtype=np.float32)
+    ts = np.array(ts, dtype=np.int)
+    #xs = np.transpose(xs, (0,3,1,2))
+    
     return xs, paths
 
 
@@ -153,32 +165,30 @@ def train():
     d = D_model(Height=img_height, Width=img_width, channel=channel)
     gan = Combined_model(g=g, d=d)
 
-    g_opt = keras.optimizers.Adam(lr=0.02, beta_1=0.5)
-    d_opt = keras.optimizers.Adam(lr=0.02, beta_1=0.5)
-    #g_opt = keras.optimizers.SGD(lr=0.1, momentum=0.3, decay=1e-5)
-    #d_opt = keras.optimizers.SGD(lr=0.1, momentum=0.1, decay=1e-5)
-
-    g.compile(loss='binary_crossentropy', optimizer='SGD')
-    d.trainable = False
-    for layer in d.layers:
-        layer.trainable = False
-    gan.compile(loss='binary_crossentropy', optimizer=g_opt)
-
+    g_opt = keras.optimizers.Adam(lr=0.0002, beta_1=0.5)
+    d_opt = keras.optimizers.Adam(lr=0.0002, beta_1=0.5)
+    
     d.trainable = True
     for layer in d.layers:
         layer.trainable = True
     d.compile(loss='binary_crossentropy', optimizer=d_opt)
+    g.compile(loss='binary_crossentropy', optimizer=d_opt)
+    d.trainable = False
+    for layer in d.layers:
+        layer.trainable = False
+    gan = Combined_model(g=g, d=d)
+    gan.compile(loss='binary_crossentropy', optimizer=g_opt)
 
-    xs, paths = data_load('../Dataset/train/images/', hf=True, vf=True)
+    xs, paths = data_load('../Dataset/train/images/', hf=True, vf=True, rot=1)
 
     # training
-    mb = 4
+    mb = 32
     mbi = 0
     train_ind = np.arange(len(xs))
     np.random.seed(0)
     np.random.shuffle(train_ind)
     
-    for i in range(1000):
+    for i in range(10000):
         if mbi + mb > len(xs):
             mb_ind = train_ind[mbi:]
             np.random.shuffle(train_ind)
@@ -201,7 +211,7 @@ def train():
 
         print("iter >>", i+1, ",g_loss >>", g_loss, ',d_loss >>', d_loss)
     
-    gan.save('model.h5')
+    g.save('model.h5')
 
 # test
 def test():
@@ -209,14 +219,18 @@ def test():
     g = G_model(Height=img_height, Width=img_width, channel=channel)
     g.load_weights('model.h5', by_name=True)
 
+    np.random.seed(100)
+    
     for i in range(3):
-        input_noise = np.random.uniform(-1, 1, size=(9, 100))
+        input_noise = np.random.uniform(-1, 1, size=(10, 100))
         g_output = g.predict(input_noise, verbose=0)
+        g_output = (g_output + 1 ) / 2
 
-        for i in range(9):
+        for i in range(10):
             gen = g_output[i]
-            plt.subplot(3,3,i+1)
+            plt.subplot(1,10,i+1)
             plt.imshow(gen)
+            plt.axis('off')
 
         plt.show()
 

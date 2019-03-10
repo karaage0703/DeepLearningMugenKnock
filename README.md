@@ -15,15 +15,21 @@
 例えば研究してて提案手法を急にKerasでやればとか簡単に言うけどそんなすぐにできるかいってよくあると思うんだけどそういうのにもすぐ対応できる力を身につけるためのものだとも思ってます。なんでフレームワーク(FW)をたくさんにしてるかと言うと、今はFWがありすぎて、使いたい論文の実装もいろんなFWになってしまっているからです。使いたい技術をすぐに使えるようにするために色んなFWを勉強する必要があると思ってます。
 
 - **内容はいろいろな文献を調べて載っけてるので正しくないものもあるかもしれないので注意して下さい**
-- 【注意】このページを利用して、または関して生じた事に関しては、私は一切責任を負いません。すべて**自己責任**でお願い致します。
+- 【注意】このページを利用して、または関して生じた事に関しては、**私は一切責任を負いません。** すべて **自己責任** でお願い致します。
 - コードの書き方は私の趣向がけっこう出てるので、この書き方キモってなったら自分の書き方でやっていってください。答えはあくまで参考です。
 - なんとなく本とか買わずにDLを勉強したいーーーって人向けだと思う
+- Google colabolatoryでGPUを使ったほうがいいかも
+
+画像処理ノックはこっち
+
+>> [画像処理100本ノック!!](https://github.com/yoyoyo-yo/Gasyori100knock)
 
 ## Recent
-- 2019.3.6. RNN, LSTM, BDLSTMを追加
-- 2019.3.5. AutoEncoder, RNNを追加　
-- 2019.3.4. データ拡張・回転を追加
-- 2019.3.3. UNetを追加
+- 2019.3.9 GAN, DCGANを追加
+- 2019.3.6 RNN, LSTM, BDLSTMを追加
+- 2019.3.5 AutoEncoder, RNNを追加　
+- 2019.3.4 データ拡張・回転を追加
+- 2019.3.3 UNetを追加
 
 ## 環境設定
 
@@ -83,10 +89,12 @@ $ pip install -r requirements.txt
 
 詳細な問題内容は各ディレクトリのREADMEにあります。（ディレクトリで下にスクロールすればあります）
 
-### [理論編]()
+### [理論編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory)
 
 |番号|問題||番号|問題|
 |:---:|:---:|:---:|:---:|:---:|
+| 1 | [パーセプトロン Step.1](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-step1)
+| 2 | [パーセプトロン Step.2](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-step2)
 
 
 ### [ディープラーニングをやる前の準備編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_prepare)
@@ -99,7 +107,7 @@ $ pip install -r requirements.txt
 | 4 | [データ拡張・水平反転](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_prepare#q4-%E3%83%87%E3%83%BC%E3%82%BF%E6%8B%A1%E5%BC%B5%E5%B7%A6%E5%8F%B3%E5%8F%8D%E8%BB%A2) |
 | 5 | [データ拡張・上下反転](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_prepare#q5-%E3%83%87%E3%83%BC%E3%82%BF%E6%8B%A1%E5%BC%B5%E4%B8%8A%E4%B8%8B%E5%8F%8D%E8%BB%A2) |
 
-### [画像認識モデル編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model)
+### [画像認識編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model)
 
 | 問題 |  PyTorch | TensorFlow | Keras | Chainer |
 |:---:|:---:|:---:|:---:|:---:|
@@ -131,11 +139,13 @@ $ pip install -r requirements.txt
 | [UNet風モデル](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_semaseg#unet%E9%A2%A8%E3%83%A2%E3%83%87%E3%83%AB)|  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/unetlike_pytorch.py) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/unetlike_tensorflow_slim.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/unetlike_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/unetlike_chainer.py) |
 
 
-### [画像生成編]()
+### [画像生成編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate)
 | 問題 |  PyTorch | TensorFlow | Keras | Chainer |
 |:---:|:---:|:---:|:---:|:---:|
 | [AutoEncoder](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-auto-encoder) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/ae_pytorch.py) |  | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/ae_keras.py) |
 | [ConvolutionalAutoEncoder](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-convolutional-auto-encoder) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/convae_pytorch.py) |  | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/convae_keras.py) |
+| [GAN](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-gan) | || [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/gan_keras.py)
+| [DCGAN](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-dcgan) | | | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/dcgan_keras.py)
 
 ### [画像処理編]()
 
