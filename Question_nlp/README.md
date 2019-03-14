@@ -133,3 +133,28 @@ LSTMをBi-directionalにしましょう。
 - Tensorflow [answers/lstm_tensorflow_slim.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/lstm_tensorflow_slim.py)
 - Keras [answers/bdlstm_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/lstm_keras.py)
 - Chainer [answers/bdlstm_chainer.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/bdlstm_chainer.py)
+
+## Q. GRU (Many-to-one)
+
+GRU (Gated Recurrent Unit) にしましょう。
+
+| FW | function | | FW | function |
+|:---:|:---:|:---:|:---:|:---:|
+| pytorch | torch.nn.GRU | | Keras | keras.layers.GRU |
+| TensorFlow | tf.keras.layers.GRU | | Chainer | chainer.links.GRU |
+
+```bash
+３０えんのおかえしです。
+６００えんじゃねーかよ、じゃあ。なんで３０えんおおくとるんだよ。
+あと、これ５００えんいじょうのおかいあげのかたにさしあげてるんですけど。
+あ。なんかもらえるの？
+れしーとです。
+れしーとじゃねーか。ぜんいんにわたせ、これよ。
+おはしは２ぜんでよろしかったですか？
+```
+
+答え
+- Pytorch [answers/gru_pytorch.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_pytorch.py)
+- Tensorflow [answers/gru_tensorflow_slim.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_tensorflow_slim.py)
+- Keras [answers/gru_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_keras.py)
+- Chainer [answers/gru_chainer.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_chainer.py)

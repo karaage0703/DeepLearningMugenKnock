@@ -28,7 +28,9 @@ input=64, width=64, channel=3 とする。
 
 答え
 - Pytorch [answers/ae_pytorch.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/ae_pytorch.py)
+- Tensorflow [answers/ae_tensorflow_slim.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/ae_tensorflow_slim.py)
 - Keras [answers/ae_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/ae_keras.py)
+- Chainer [answers/ae_chainer.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/ae_chainer.py)
 
 ## Q. Convolutional Auto Encoder
 
@@ -38,7 +40,7 @@ AEはMLPのみの構成だったが、ここではConvolutoinとTransposed convo
 1. Input = (height, width, channel)
 2. Conv(kernel_num=32, kernel_size=3, padding=1, strfide=1)
 3. Conv(kernel_num=16, kernel_size=3, padding=1, strfide=1)
-4. TransposedConv(kernel_num=64, kernel_size=2, padding=0, strfide=2)
+4. TransposedConv(kernel_num=32, kernel_size=2, padding=0, strfide=2)
 4. TransposedConv(kernel_num=channel, kernel_size=2, padding=0, strfide=2)
 
 | answer_convae_pytorch_akahara_0011.png | answer_convae_pytorch_madara_0011.png |
@@ -46,7 +48,10 @@ AEはMLPのみの構成だったが、ここではConvolutoinとTransposed convo
 ![](answers/answer_convae_pytorch_akahara_0011.png) | ![](answers/answer_convae_pytorch_madara_0011.png) | 
 
 答え
-- Pytorch [answers/ae_pytorch.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/ae_pytorch.py)
+- Pytorch [answers/convae_pytorch.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/convae_pytorch.py)
+- Tensorflow [answers/convae_tensorflow_slim.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/ae_tensorflow_slim.py)
+- Keras [answers/convae_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/convae_keras.py)
+- Chainer [answers/convae_chainer.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/convae_chainer.py)
 
 ## Q. GAN
 

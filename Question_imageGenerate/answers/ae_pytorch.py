@@ -7,8 +7,9 @@ from glob import glob
 import matplotlib.pyplot as plt
 
 num_classes = 2
-img_height, img_width = 64, 64 #572, 572
-channel = 3
+img_height, img_width = 64, 64
+channel = 1
+
 GPU = False
 torch.manual_seed(0)
     
@@ -33,7 +34,6 @@ CLS = {'akahara': [0,0,128],
 # get train data
 def data_load(path, hf=False, vf=False, rot=None):
     xs = []
-    ts = []
     paths = []
     
     for dir_path in glob(path + '/*'):
@@ -43,33 +43,22 @@ def data_load(path, hf=False, vf=False, rot=None):
                 x = cv2.cvtColor(x, cv2.COLOR_BGR2GRAY)
             x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
             x = x / 127.5 - 1
-            if channel == 1:
-                x = x[..., None]
-            else:
+            if channel == 3:
                 x = x[..., ::-1]
             xs.append(x)
-
-            for i, cls in enumerate(CLS):
-                if cls in path:
-                    t = i
-            
-            ts.append(t)
 
             paths.append(path)
 
             if hf:
                 xs.append(x[:, ::-1])
-                ts.append(t)
                 paths.append(path)
 
             if vf:
                 xs.append(x[::-1])
-                ts.append(t)
                 paths.append(path)
 
             if hf and vf:
                 xs.append(x[::-1, ::-1])
-                ts.append(t)
                 paths.append(path)
 
             if rot is not None:
@@ -77,9 +66,15 @@ def data_load(path, hf=False, vf=False, rot=None):
                 scale = 1
                 while angle < 360:
                     angle += rot
-                    _h, _w, _c = x.shape
-                    max_side = max(_h, _w)
-                    tmp = np.zeros((max_side, max_side, _c))
+                    if channel == 1:
+                        _h, _w = x.shape
+                        max_side = max(_h, _w)
+                        tmp = np.zeros((max_side, max_side))
+                    else:
+                        _h, _w, _c = x.shape
+                        max_side = max(_h, _w)
+                        tmp = np.zeros((max_side, max_side, _c))
+                    
                     tx = int((max_side - _w) / 2)
                     ty = int((max_side - _h) / 2)
                     tmp[ty: ty+_h, tx: tx+_w] = x.copy()
@@ -87,14 +82,15 @@ def data_load(path, hf=False, vf=False, rot=None):
                     _x = cv2.warpAffine(tmp, M, (max_side, max_side))
                     _x = _x[tx:tx+_w, ty:ty+_h]
                     xs.append(x)
-                    ts.append(t)
                     paths.append(path)
                     
     xs = np.array(xs, dtype=np.float32)
-    ts = np.array(ts, dtype=np.int)
-    xs = np.transpose(xs, (0,3,1,2))
+
+    if channel == 1:
+        xs = np.expand_dims(xs, axis=-1)
+    xs = np.transpose(xs, [0,3,1,2])
     
-    return xs, ts, paths
+    return xs, paths
 
 
 # train
@@ -107,7 +103,7 @@ def train():
     opt = torch.optim.Adam(model.parameters(), lr=0.001)
     model.train()
 
-    xs, ts, paths = data_load('../Dataset/train/images/', hf=True, vf=True, rot=1)
+    xs, paths = data_load('../Dataset/train/images/', hf=True, vf=True, rot=1)
 
     # training
     mb = 256
@@ -151,11 +147,10 @@ def test():
     model.eval()
     model.load_state_dict(torch.load('cnn.pt'))
 
-    xs, ts, paths = data_load('../Dataset/test/images/')
+    xs, paths = data_load('../Dataset/test/images/')
 
     for i in range(len(paths)):
         x = xs[i]
-        t = ts[i]
         path = paths[i]
         
         x = np.expand_dims(x, axis=0)
@@ -169,23 +164,25 @@ def test():
         pred /= pred.max()
         pred = pred.transpose(1,2,0)
         
-        plt.subplot(1,2,1)
         _x = x.detach().cpu().numpy()[0]
         _x = (_x + 1) / 2
         if channel == 1:
-            plt.imshow(_x[0])
+            pred = pred[..., 0]
+            _x = _x[0]
+            cmap = 'gray'
         else:
-            plt.imshow(_x.transpose(1,2,0))
-        plt.title("input")
-        plt.subplot(1,2,2)
-        if channel == 1:
-            plt.imshow(pred[0], cmap='gray')
-        else:
-            plt.imshow(pred)
-        plt.title("predicted")
-        plt.show()
+            _x = _x.transpose(1,2,0)
+            cmap = None
 
         print("in {}".format(path))
+            
+        plt.subplot(1,2,1)
+        plt.title("input")
+        plt.imshow(_x, cmap=cmap)
+        plt.subplot(1,2,2)
+        plt.title("predicted")
+        plt.imshow(pred, cmap=cmap)
+        plt.show()
     
 
 def arg_parse():

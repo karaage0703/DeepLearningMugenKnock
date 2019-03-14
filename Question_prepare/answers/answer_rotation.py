@@ -21,6 +21,7 @@ def data_load(path, hf=False, vf=False, rot=None):
             x = cv2.imread(path)
             x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
             x /= 255.
+            x = x[..., ::-1]
             xs.append(x)
 
             for i, cls in enumerate(CLS):
@@ -47,10 +48,20 @@ def data_load(path, hf=False, vf=False, rot=None):
                 paths.append(path)
 
             if rot is not None:
-                angle = 0
+                angle = rot
                 scale = 1
+
+                # show
+                a_num = 360 // rot
+                w_num = np.ceil(np.sqrt(a_num))
+                h_num = np.ceil(a_num / w_num)
+                count = 1
+                plt.subplot(h_num, w_num, count)
+                plt.axis('off')
+                plt.imshow(x)
+                plt.title("angle=0")
+                
                 while angle < 360:
-                    angle += rot
                     _h, _w, _c = x.shape
                     max_side = max(_h, _w)
                     tmp = np.zeros((max_side, max_side, _c))
@@ -64,9 +75,15 @@ def data_load(path, hf=False, vf=False, rot=None):
                     ts.append(t)
                     paths.append(path)
 
+                    # show
+                    count += 1
+                    plt.subplot(h_num, w_num, count)
                     plt.imshow(_x)
-                    plt.show()
+                    plt.axis('off')
+                    plt.title("angle={}".format(angle))
 
+                    angle += rot
+                plt.show()
 
 
     xs = np.array(xs, dtype=np.float32)
@@ -77,7 +94,7 @@ def data_load(path, hf=False, vf=False, rot=None):
     return xs, ts, paths
 
 
-xs, ts, paths = data_load("../Dataset/train/images/", hf=True, vf=True, rot=30)
+xs, ts, paths = data_load("../Dataset/train/images/", hf=True, vf=True, rot=1)
 
 mb = 3
 mbi = 0
