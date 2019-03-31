@@ -1,4 +1,4 @@
-# Q. 理論編
+# 理論編
 
 ここではディープラーニングの理論をnumpyを使って自分の手で実装していきます。わからないと無限に泥沼にはまってしまいやすいので、ちょっと答えを見たりしてコーディングしてみましょう。
 
@@ -57,14 +57,14 @@ in >> [1. 1. 1.] y >> 3.1429475384406267
 重みをどうやって更新するかというと、出力を見るわけです。今回の問題は最後の出力が-1か1なので２クラス分類という問題に回帰されます。ですが、先程の出力を見ると、0.9787とかになってます。こういうときは、出力が0以上を1、0未満を-1という風に考えて、問題にフィットさせます。（こういう操作は**活性化関数**と呼ばれるもので操作されていきますが、これは後々）
 
 パーセプトロンでは、出力が逆だった場合、En = ラベル x 入力値　 を重みの更新料とします。（Enは**誤差関数**と呼ばれます。）
-つまり、重み w に対して、w = w - lr En を計算します。 lrは**学習率**といい、更新の度合いを表します。0.1や0.01など[0,1]の範囲を取ります。
+つまり、重み w に対して、w = w + lr En を計算します。 lrは**学習率**といい、更新の度合いを表します。0.1や0.01など[0,1]の範囲を取ります。
 
 これを全てのデータに対して更新がなくなるまで、延々と繰り返します。これが学習です。ディープラーニングはこの学習をめちゃくちゃやってすごい成果を出しています。
 
 学習のアルゴリズムは、
 1. ４つの入力xに対する出力yを計算
 2. yが逆のクラスを指していたら、 En = 正しいラベル x 入力値　を計算
-3. w = w - lr En を計算する
+3. w = w + lr En を計算する
 4. 2と3を全てのデータで更新がされなくなるまで、４つのデータで繰り返す。
 ここではlr=0.1として、これを学習を行ってみましょう。
 
@@ -114,7 +114,7 @@ lr=0.1と0.01で収束までの、w1, w2, w3の値をそれぞれ線グラフで
 
 **Sigmoid関数**は sigmoid(x) = 1 / (1 + exp(-x)) で出される関数であり、**[0,1] の範囲に正規化する**ことができます。この関数は最後に**確率**を表したい時などに使います。
 
-出力にSigmoidを仕様した時、誤差関数は En = - (t - y) * y * (1 - y) になります。
+出力にSigmoidを仕様した時、誤差関数の微分は En = - (t - y) * y * (1 - y) になります。(これは誤差関数をMSEに設定した場合としてます。詳しくは後々)
 
 出力例
 
@@ -306,8 +306,67 @@ B --- not(A anb B) --|
 
 答え >> [answers/multi_perceptron_2.py]( https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_theory/answers/multi_perceptron_2.py )
 
-## Q. 更に多層パーセプトロン
+## Q. 更に多層パーセプトロン(ディープラーニングへの進化)
 
 今度は中間層を1層さらに増やして、3層構造にしましょう。
 
 答え >> [answers/multi_perceptron_3.py]( https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_theory/answers/multi_perceptron_3.py )
+
+## Q. ニューラルネットのクラス化
+
+ここから、ちょっと厄介になります。注意してください。
+
+ここまでで、ニューラルネットの原型ができました。だけど今の状態では、重みをいちいち手動で定義したり、順伝搬、逆伝搬も全て手動でやらなきゃなので、とても使いにくいです。実際、DLのライブラリはこんな面倒な定義をしなくてもいいようにできています。
+
+なのでクラス化してもっと楽に定義してみましょう。ここでは、PyTorchっぽく作ってみましょう。
+
+
+例えば、FullyConnectedLayerをクラス化して、かつlayer同士を繋げるModelというクラスを作って、こんなふうに定義できるようにしてみましょう。
+
+```python
+model = Model(FullyConnectedLayer(in_n=2, out_n=64, activation=sigmoid),
+              FullyConnectedLayer(in_n=64, out_n=32, activation=sigmoid),
+              FullyConnectedLayer(in_n=32, out_n=1, activation=sigmoid), lr=0.1)
+```
+
+forward計算は
+
+```python
+model.forward(xs)
+```
+
+Lossの計算は
+
+```python
+model.backward(ts)
+```
+
+これならPyTorchっぽくできます。これっぽくするには、こうするといいかもしれません。（この通りにしなくても、自分の作りやすいようにしてください）
+
+```python
+class FullyConnectedLayer():
+    def __init__(self, in_n, out_n, use_bias=True, activation=None):
+        # write your process
+
+    def forward(self, feature_in):
+        # write your process
+    
+    def backward(self, w_pro, grad_pro):
+        # write your process
+    
+class Model():
+    def __init__(self, *args, lr=0.1):
+        self.layers = args
+        for l in self.layers:
+            l.set_lr(lr=lr)
+    
+    def forward(self, x):
+        # write your process
+    
+    def backward(self, t):
+        # write your process
+```
+
+答え >> [answers/multi_perceptron_class.py]( https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_theory/answers/multi_perceptron_class.py )
+
+

@@ -12,18 +12,25 @@
 
 僕が研究室で３年修行してディープラーニングで必要そうだなーと思ったものを集めてます。
 
-例えば研究してて提案手法を急にKerasでやればとか簡単に言うけどそんなすぐにできるかいってよくあると思うんだけどそういうのにもすぐ対応できる力を身につけるためのものだとも思ってます。なんでフレームワーク(FW)をたくさんにしてるかと言うと、今はFWがありすぎて、使いたい論文の実装もいろんなFWになってしまっているからです。使いたい技術をすぐに使えるようにするために色んなFWを勉強する必要があると思ってます。
+例えば研究してて提案手法を急にKerasでやればとか簡単に言うけどそんなすぐにできるかいってよくあると思うんだけどそういうのにもすぐ対応できる力を身につけるためのものだとも思ってます。
 
-- **内容はいろいろな文献を調べて載っけてるので正しくないものもあるかもしれないので注意して下さい**
+- **内容はいろいろな文献を調べて載っけてるので正しくないものもあるかもしれないので注意して下さい。もし間違ってたらプルリク下さい笑**
 - 【注意】このページを利用して、または関して生じた事に関しては、**私は一切責任を負いません。** すべて **自己責任** でお願い致します。
-- コードの書き方は私の趣向がけっこう出てるので、この書き方キモってなったら自分の書き方でやっていってください。答えはあくまで参考です。
+- コードの書き方は私の趣向がけっこう出てるので、この書き方キモってなったら自分の書き方でやっていってください。答えはあくまで参考です。FWによってチョクチョク実装に小さな違いがあるのでそこはご愛嬌
 - なんとなく本とか買わずにDLを勉強したいーーーって人向けだと思う
+
+## Related
 
 画像処理ノックはこっち
 
->> [画像処理100本ノック!!](https://github.com/yoyoyo-yo/Gasyori100knock)
+> [画像処理100本ノック!!](https://github.com/yoyoyo-yo/Gasyori100knock)
 
 ## Recent
+- 2019.3.31 [画像認識モデル]APIを追加
+- 2019.3.19 [Pytorch][Chainer] GAN, DCGANを追加
+- 2019.3.17 Pooling layerを追加したけど、あとからクラス化と学習を追加する予定
+- 2019.3.17 seq2seq, convolutional layer を追加
+- 2019.3.16 ニューラルネットをクラス化　を追加
 - 2019.3.13 パーセプトロン系を追加
 - 2019.3.12 AutoEncoder, ConvAutoEncoder, パーセプトロンを追加
 - 2019.3.9 GAN, DCGANを追加
@@ -66,7 +73,7 @@ $ git clone https://github.com/yoyoyo-yo/DeepLearningMugenKnock.git
 
 ### 3. パッケージのインストール
 
-以下のコマンドで必要なパッケージをインストールします。
+以下のコマンドで必要なパッケージをインストールします。これで準備は完了です！！
 
 
 ```bash
@@ -90,21 +97,38 @@ $ pip install -r requirements.txt
 
 詳細な問題内容は各ディレクトリのREADMEにあります。（ディレクトリで下にスクロールすればあります）
 
+## 自分で全部実装編
+
 ### [理論編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory)
 
-|番号|問題||番号|問題|
+| 番号 | 問題 | | 番号 | 問題 |
 |:---:|:---:|:---:|:---:|:---:|
-| 1 | [パーセプトロン AND](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-and)
-| 2 | [パーセプトロン 学習](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-%E5%AD%A6%E7%BF%92)
-| 3 | [パーセプトロン 収束性](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-%E5%8F%8E%E6%9D%9F%E6%80%A7)
-| 4 | [パーセプトロン Sigmoid](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-sigmoid)
-| 5 | [パーセプトロン バイアス](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-bias)
-| 6 | [パーセプトロン OR](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-or)
-| 7 | [パーセプトロン NOT](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-not)
-| 8 | [パーセプトロン XOR](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-xor%E3%82%B2%E3%83%BC%E3%83%88)
-| 9 | [多層パーセプトロン FeedForward](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E5%A4%9A%E5%B1%A4%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-feedforward)
-| 10 | [多層パーセプトロン 学習](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E5%A4%9A%E5%B1%A4%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-%E5%AD%A6%E7%BF%92)
-| 11 | [更に多層パーセプトロン](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E6%9B%B4%E3%81%AB%E5%A4%9A%E5%B1%A4%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3)
+| 1 | [パーセプトロン AND](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-and) | 
+| 2 | [パーセプトロン 学習](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-%E5%AD%A6%E7%BF%92) | 
+| 3 | [パーセプトロン 収束性](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-%E5%8F%8E%E6%9D%9F%E6%80%A7) | 
+| 4 | [パーセプトロン Sigmoid](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-sigmoid) | 
+| 5 | [パーセプトロン バイアス](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-bias) | 
+| 6 | [パーセプトロン OR](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-or) | 
+| 7 | [パーセプトロン NOT](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-not) |
+| 8 | [パーセプトロン XOR](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-xor%E3%82%B2%E3%83%BC%E3%83%88) |
+| 9 | [多層パーセプトロン FeedForward](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E5%A4%9A%E5%B1%A4%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-feedforward) |
+| 10 | [多層パーセプトロン 学習](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E5%A4%9A%E5%B1%A4%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3-%E5%AD%A6%E7%BF%92) |
+| 11 | [更に多層パーセプトロン](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E6%9B%B4%E3%81%AB%E5%A4%9A%E5%B1%A4%E3%83%91%E3%83%BC%E3%82%BB%E3%83%97%E3%83%88%E3%83%AD%E3%83%B3) | 
+| 12 | [ニューラルネットのクラス化](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory#q-%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%A9%E3%83%AB%E3%83%8D%E3%83%83%E3%83%88%E3%81%AE%E3%82%AF%E3%83%A9%E3%82%B9%E5%8C%96)
+
+### [理論編2](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/)
+
+| 番号 | 問題 | | 番号 | 問題 |
+|:---:|:---:|:---:|:---:|:---:|
+| 13 | [画像認識](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/#%E7%94%BB%E5%83%8F%E8%AA%8D%E8%AD%98)
+| 14 | [誤差関数](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/#%E8%AA%A4%E5%B7%AE%E9%96%A2%E6%95%B0)
+|  | [Sigmoid Cross Entropy](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/#sigmoid-cross-entropy)
+|  | [Convolutional Layer](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/#convolutional-layer) |
+|  | [Padding](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/#padding) | 
+|  | [Stride](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2/#stride) |
+|  | [Max-pooling layer](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2#max-pooling-layer) |
+|  | [Average-pooling layer](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_theory2#average-pooling-layer) |
+
 
 ### [ディープラーニングをやる前の準備編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_prepare)
 
@@ -116,10 +140,13 @@ $ pip install -r requirements.txt
 | 4 | [データ拡張・水平反転](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_prepare#q4-%E3%83%87%E3%83%BC%E3%82%BF%E6%8B%A1%E5%BC%B5%E5%B7%A6%E5%8F%B3%E5%8F%8D%E8%BB%A2) |
 | 5 | [データ拡張・上下反転](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_prepare#q5-%E3%83%87%E3%83%BC%E3%82%BF%E6%8B%A1%E5%BC%B5%E4%B8%8A%E4%B8%8B%E5%8F%8D%E8%BB%A2) |
 
+## ライブラリ使い方編
+
 ### [画像認識編](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model)
 
 | 問題 |  PyTorch | TensorFlow | Keras | Chainer |
 |:---:|:---:|:---:|:---:|:---:|
+| [ API ](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model#api) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/api_pytorch.py) | 
 | [LeNet](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model#q-lenet) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_pytorch.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_tensorflow_layers.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_chainer.py) | 
 | [AlexNet](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model#q-alexnet) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/alexnet_pytorch.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/alexnet_tensorflow_layers.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/alexnet_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/alexnet_chainer.py) | 
 | [ZFNet](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_model#q-zfnet) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/zfnet_pytorch.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/zfnet_tensorflow_layers.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/zfnet_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/zfnet_chainer.py) | 
@@ -153,8 +180,8 @@ $ pip install -r requirements.txt
 |:---:|:---:|:---:|:---:|:---:|
 | [AutoEncoder](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-auto-encoder) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/ae_pytorch.py) | [✓?](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/ae_tensorflow_slim.py)  | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/ae_keras.py) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/ae_chainer.py) |
 | [ConvolutionalAutoEncoder](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-convolutional-auto-encoder) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_semaseg/answers/convae_pytorch.py) |  [✓?](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/convae_tensorflow_slim.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/convae_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/convae_chainer.py) |
-| [GAN](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-gan) | || [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/gan_keras.py)
-| [DCGAN](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-dcgan) | | | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/dcgan_keras.py)
+| [GAN](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-gan) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/dcgan_pytorch.py) |   | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/gan_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/gan_chainer.py)
+| [DCGAN](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_imageGenerate#q-dcgan) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/dcgan_pytorch.py) | | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/dcgan_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_imageGenerate/answers/dcgan_chainer.py)
 
 ### [画像処理編]()
 
@@ -167,6 +194,7 @@ $ pip install -r requirements.txt
 | [LSTM (Many-to-one)](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_nlp#q-lstm-many-to-one) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/lstm_pytorch.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/lstm_tensorflow_slim.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/lstm_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/lstm_chainer.py) |
 | [Bi-directional LSTM (Many-to-one)](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_nlp#q-bi-directional-lstm-many-to-one) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/bdlstm_pytorch.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/bdlstm_tensorflow_slim.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/bdlstm_keras.py) | [✓?](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/bdlstm_chainer.py) |
 | [GRU (Many-to-one)](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_nlp#q-gru-many-to-one) |  [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_pytorch.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_tensorflow_slim.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_keras.py) | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_chainer.py) |
+| [Seq2seq (Many-to-many)](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/tree/master/Question_nlp#q-seq2seq-many-to-many) |  |  | [✓](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/seq2seq_keras.py) |
 
 ## Citation
 

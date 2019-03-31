@@ -158,3 +158,31 @@ GRU (Gated Recurrent Unit) にしましょう。
 - Tensorflow [answers/gru_tensorflow_slim.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_tensorflow_slim.py)
 - Keras [answers/gru_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_keras.py)
 - Chainer [answers/gru_chainer.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/gru_chainer.py)
+
+## Q. Seq2seq (Many-to-many)
+
+ここではSeq2seqを実装します。Seq2seqとはSequence to sequenceのことであり、時系列(Sequence)データを入力して、時系列データを得ることです。
+
+<EOS>とはEnd of statement、つまり、文の区切りを指します。
+入力の時系列データを一つずつLSTMなりに入力して、その内部の状態（隠れ層のパラメータを保持します。）これを入力の時系列全てに行います。そのご、後ろにFullyConnected層とSoftmaxをつなげて、<EOS>を入力します。すると、最初の時系列データhが出ます。そのhをLSTMへの次の入力として、次の出力eを得ます。これを<EOS>が出るまで繰り返します。
+
+これで何をしてるかというと、「こんにちは」と入力して、「hello」と出力してます。つまり、翻訳などができます。
+
+![](assets/seq2seq.png)
+
+ここでは、sandwitchman.txtで1行目を入れたら2行目を出力、2行目を入れたら3行目を出力するという様なボケ→ツッコミ、ツッコミ→ボケというような構造を作成してみましょう。
+
+次のexampleが参考になります。
+
+| FW | function | | FW | function |
+|:---:|:---:|:---:|:---:|:---:|
+| pytorch |  | | Keras | https://github.com/keras-team/keras/blob/master/examples/lstm_seq2seq.py |
+| TensorFlow |  | | Chainer |  |
+
+```bash
+[In]Speaker.A: >> ちょっとなにいってるかわからない
+[Out]Speaker.B: >> ぎっしょにおか、おいまどらせんなーな、いって。おんっつったんだよ。よまとうもたの。
+```
+
+答え
+- Keras [answers/gru_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_nlp/answers/seq2seq_keras.py)

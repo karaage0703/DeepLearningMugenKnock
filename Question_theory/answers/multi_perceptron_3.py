@@ -35,7 +35,7 @@ for ite in range(10000):
 
     # back propagate
     En = (out - ts) * out * (1 - out)
-    grad_wout = np.dot(z2.T, En)
+    grad_wout = np.dot(z3.T, En)
     grad_bout = np.dot(np.ones([En.shape[0]]), En)
     wout -= lr * grad_wout
     bout -= lr * grad_bout

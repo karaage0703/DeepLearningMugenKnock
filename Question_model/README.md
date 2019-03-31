@@ -1,7 +1,31 @@
-# Q. 画像認識モデル編
+# Q. 画像認識編
 
 ここではCNNの有名モデルを自分の手で実装していきます。フレームワークは自由だが、**とりあえずPyTorch, Tensorflow, Keras, Chainer全部で実装してください。**
 ネットワークを作ったら、学習率やイテレーションを変えて、テストデータセット *../Dataset/test/images* でテストしてみてください。
+
+## API
+
+各有名モデルのAPIを使ってみましょう。
+
+pytorchは 
+
+```bash
+$ pip install cnn_finetune
+```
+をして、ライブラリを追加しなきゃいけません。
+
+| FW | function | | FW | function |
+|:---:|:---:|:---:|:---:|:---:|
+| pytorch | cnn_finetune.make_model  | | Keras |  |
+| TensorFlow |  | | Chainer |  |
+
+pytorchの参考サイト >> https://github.com/creafz/pytorch-cnn-finetune
+
+答え
+- Pytorch [answers/api_pytorch.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/api_pytorch.py)
+- Tensorflow [answers/lenet_tensorflow_layers.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_tensorflow_layers.py)
+- Keras [answers/lenet_keras.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_keras.py)
+- chainer [answers/lenet_chainer.py](https://github.com/yoyoyo-yo/DeepLearningMugenKnock/blob/master/Question_model/answers/lenet_chainer.py)
 
 ## Q. LeNet
 
@@ -37,10 +61,11 @@
 ディープラーニングを流行らせた張本人モデル。ImageNetという画像認識のコンペILSVRC2012で圧倒的一位で優勝したことから現在のディープラーニングブームが起こりました。これを実装してくさい。
 AlexNetでは*Local Response Normalization* という特別な正規化Layerがあります。
 
-| FW | function | FW | function |
-|:---:|:---:|:---:|:---:|
-| PyTorch | torch.nn.modules.normalization.LocalResponseNorm() | Keras | - |
-| TensorFlow | tf.nn.local_response_normalization() | Chainer | chainer.functions.local_response_normalization() |
+| FW | function | | FW | function |
+|:---:|:---:|:---:|:---:|:---:|
+| PyTorch | torch.nn.modules.normalization.LocalResponseNorm() | | Keras | - |
+| TensorFlow | tf.nn.local_response_normalization() | | Chainer | chainer.functions.local_response_normalization() |
+
 LRNは効果が薄いことから最近ではほとんど使われてません。こういうのもあったんだなあ程度に覚えておくといいと思います。
 
 ただし学習データの枚数が少ないので学習が進まないので、精度を上げたいときは自分で学習データを増やすか、パラメータ数を変えるなどの工夫が必要なので注意。
