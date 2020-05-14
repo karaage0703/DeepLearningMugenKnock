@@ -1,10 +1,10 @@
-# Q. 言語処理編
+# Natural Language Processing
 
 ここでは自然言語処理の手法を自分の手で実装していきます。**とりあえずPyTorch, Tensorflow, Keras, Chainer全部で実装してください。**
 ネットワークを作ったら、学習率やイテレーションを変えて、テストデータセット *../Dataset/test/images* でテストしてみてください。
 ぼくじしん画像処理の研究が専門だったので、ところどころ間違いがあるかもしれません。あったらプルリクください。
 
-## Q. 1hotベクトル化
+## 1hot
 
 まずは1hot表現について。1hot表現とは対応するクラスの位置のみが1で、ほかが0である表現ほうほう。例えば、「あいうえお」において「い」を表現するには[0,1,0,0,0]となる。
 
@@ -18,10 +18,7 @@ chars = "あいうおえかきくけこさしすせそたちつてとなにぬ�
 chars = [c for c in chars]
 ```
 
-答え
-- [answers/onehot.py](answers/onehot.py)
-
-## Q. RNN (Many-to-one) Step.1. 学習 
+## RNN
 
 1hotベクトルにしたら、それを基にRNNを学習させ、**many-to-one** によりn-gramを実現してみましょう。
 
@@ -44,12 +41,6 @@ chars = [c for c in _chars]
 | pytorch | torch.nn.RNN | | Keras | keras.layers.SimpleRNN |
 | TensorFlow | tf.keras.layers.SimpleRNN | | Chainer | ? |
 
-答え
-- Pytorch [answers/rnn_pytorch.py](answers/rnn_pytorch.py)
-- Tensorflow [answers/rnn_tensorflow_slim.py](answers/rnn_tensorflow_slim.py)
-- Keras [answers/rnn_keras.py](answers/rnn_keras.py)
-
-## Q. RNN (Many-to-one) Step.2. テスト
 
 上で学習させたRNNから実際にコントを実現させましょう。
 
@@ -75,11 +66,11 @@ RNNへの最初の入力はin_text='@@@@@@@@@@'です。学習時にテキスト
 ```
 
 答え
-- Pytorch [answers/rnn_pytorch.py](answers/rnn_pytorch.py)
-- Tensorflow [answers/rnn_tensorflow_slim.py](answers/rnn_tensorflow_slim.py)
-- Keras [answers/rnn_keras.py](answers/rnn_keras.py)
+- Pytorch [scripts_pytorch/rnn_pytorch.py](scripts_pytorch/rnn_pytorch.py)
+- Tensorflow [scripts_tf_slim/rnn_tensorflow_slim.py](scripts_tf_slim/rnn_tensorflow_slim.py)
+- Keras [scripts_keras/rnn_keras.py](scripts_keras/rnn_keras.py)
 
-## Q. LSTM (Many-to-one)
+## LSTM
 
 RNNをLSTMに変えてみましょう。
 
@@ -103,12 +94,12 @@ RNNをLSTMに変えてみましょう。
 ```
 
 答え
-- Pytorch [answers/lstm_pytorch.py](answers/lstm_pytorch.py)
-- Tensorflow [answers/lstm_tensorflow_slim.py](answers/lstm_tensorflow_slim.py)
-- Keras [answers/lstm_keras.py](answers/lstm_keras.py)
-- Chainer [answers/lstm_chainer.py](answers/lstm_chainer.py)
+- Pytorch [scripts_pytorch/lstm_pytorch.py](scripts_pytorch/lstm_pytorch.py)
+- Tensorflow [scripts_tf_slim/lstm_tensorflow_slim.py](scripts_tf_slim/lstm_tensorflow_slim.py)
+- Keras [scripts_keras/lstm_keras.py](scripts_keras/lstm_keras.py)
+- Chainer [scripts_chainer/lstm_chainer.py](scripts_chainer/lstm_chainer.py)
 
-## Q. Bi-directional LSTM (Many-to-one)
+## Bi-directional LSTM
 
 LSTMをBi-directionalにしましょう。
 
@@ -129,12 +120,12 @@ LSTMをBi-directionalにしましょう。
 ```
 
 答え
-- Pytorch [answers/lstm_pytorch.py](answers/lstm_pytorch.py)
-- Tensorflow [answers/lstm_tensorflow_slim.py](answers/lstm_tensorflow_slim.py)
-- Keras [answers/bdlstm_keras.py](answers/lstm_keras.py)
-- Chainer [answers/bdlstm_chainer.py](answers/bdlstm_chainer.py)
+- Pytorch [scripts_pytorch/lstm_pytorch.py](scripts_pytorch/lstm_pytorch.py)
+- Tensorflow [scripts_tf_slim/lstm_tensorflow_slim.py](scripts_tf_slim/lstm_tensorflow_slim.py)
+- Keras [scripts_keras/bdlstm_keras.py](scripts_keras/bdlstm_keras.py)
+- Chainer [scripts_chainer/bdlstm_chainer.py](scripts_chainer/bdlstm_chainer.py)
 
-## Q. GRU (Many-to-one)
+## GRU
 
 GRU (Gated Recurrent Unit) にしましょう。
 
@@ -154,15 +145,14 @@ GRU (Gated Recurrent Unit) にしましょう。
 ```
 
 答え
-- Pytorch [answers/gru_pytorch.py](answers/gru_pytorch.py)
-- Tensorflow [answers/gru_tensorflow_slim.py](answers/gru_tensorflow_slim.py)
-- Keras [answers/gru_keras.py](answers/gru_keras.py)
-- Chainer [answers/gru_chainer.py](answers/gru_chainer.py)
+- Pytorch [scripts_pytorch/gru_pytorch.py](scripts_pytorch/gru_pytorch.py)
+- Tensorflow [scripts_tf_slim/gru_tensorflow_slim.py](scripts_tf_slim/gru_tensorflow_slim.py)
+- Keras [scripts_keras/gru_keras.py](scripts_keras/gru_keras.py)
+- Chainer [scripts_chainer/gru_chainer.py](scripts_chainer/gru_chainer.py)
 
-## Q. Seq2seq (Many-to-many)
+## Seq2seq
 
-元論文
-- Sequence to Sequence Learning with Neural Networks https://arxiv.org/abs/1409.3215?context=cs (2014)
+[Ref] Sequence to Sequence Learning with Neural Networks https://arxiv.org/abs/1409.3215?context=cs (2014)
 
 ここではSeq2seqを実装します。Seq2seqとはSequence to sequenceのことであり、時系列(Sequence)データを入力して、時系列データを得ることです。
 
@@ -188,16 +178,25 @@ GRU (Gated Recurrent Unit) にしましょう。
 ```
 
 答え
-- PyTorch [answers/seq2seq_pytorch.py](answers/seq2seq_pytorch.py)
-- Keras [answers/gru_keras.py](answers/seq2seq_keras.py)
+- PyTorch [scripts_pytorch/seq2seq_pytorch.py](scripts_pytorch/seq2seq_pytorch.py)
+- Keras [scripts_keras/gru_keras.py](scripts_keras/seq2seq_keras.py)
 
-## Q. Seq2Seq + Attention (Step1. Source Target Attention)
+## Transformer 
 
-元論文
-- Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+[Ref] Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+
+TransformerはRNNに特徴の注目領域を重視するAttentionが加わったもの。次のモジュールが含まれる。
+
+- Source Target Attention
+- Self Attention
+- Multi-head Attention
+- Feed Forward Network
+- Positional Encoding
 
 AttentionはNeural Networkにおいて特徴の注目を行うアルゴリズムである。
 Attentionには主に Source Target Attention と Self Attention がある。
+
+### Source Target Attention
 
 Source Target Attention は Source(Encoder) から Target(Decoder) への Attention を作成するアルゴリズムである。
 
@@ -222,13 +221,7 @@ Source Target Attentionでは、InputはTarget(Decoder)内部の入力(シンプ
 
 <img src="assets/source_target_attention.png" width=250>
 
-答え
-- PyTorch [answers/seq2seq_attention_sourceTargetAttention_pytorch.py](answers/seq2seq_attention_sourceTargetAttention_pytorch.py)
-
-## Q. Seq2Seq + Attention (Step2. Self Attention)
-
-元論文
-- Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+### Self Attention
 
 Self Attention は自身から自身への Attention を作成するアルゴリズムであり、Encoder, Decoderの両方に使うことができる。
 
@@ -238,13 +231,8 @@ Self Attentionでは入力ベクトルをInputとMemoryにすることで、自�
 
 論文によれば Self Attention の次に Source Target Attention を繋げるらしい。
 
-答え
-- PyTorch [answers/seq2seq_attention_selfAttention_pytorch.py](answers/seq2seq_attention_selfAttention_pytorch.py)
 
-## Q. Seq2Seq + Attention (Step3. Multi head Attention)
-
-元論文
-- Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+### Multi head Attention
 
 Multi head AttentionではAttentionにおいて、チャネルを分割することで精度向上を図るアルゴリズムである。
 
@@ -257,13 +245,7 @@ Multi head AttentionではAttentionにおいて、チャネルを分割するこ
 
 ここでの実装では、チャネル分割を行ってから特徴のshapeを [1, C / N]から [N, C]に変更することでMulti headを実現した。
 
-答え
-- PyTorch [answers/seq2seq_attention_multiHeadAttention_pytorch.py](answers/seq2seq_attention_multiHeadAttention_pytorch.py)
-
-## Q. Seq2Seq + Attention (Step4. Feed Forward Network)
-
-元論文
-- Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+### Feed Forward Network
 
 EncoderにもDecoderにもFeed Forward Networkが使われている。
 Feed Forward NetworkはAttentionの直後に毎回使われ。
@@ -275,14 +257,7 @@ Feed Forward NetworkはAttentionの直後に毎回使われ。
 
 <img src="assets/feed_forward_network2.png" width=250>
 
-答え
-- PyTorch [answers/seq2seq_attention_FFN_pytorch.py](answers/seq2seq_attention_FFN_pytorch.py)
-
-
-## Q. Seq2Seq + Attention (Step5. Positional Encoding)
-
-元論文
-- Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+### Positional Encoding
 
 Sequenceデータに時間的な位置の情報を加えるために、Positional Encodingというものが使われる。
 これは次式で計算される。
@@ -293,14 +268,7 @@ posが時間的な位置、iが次元での位置、d_modelが特徴量の全次
 
 AttentionでSinusoid(Sin)関数をを使っているのは、学習時にSequenceの長さをモデルに学習させることが可能であるためだという。
 
-答え
-- PyTorch [answers/seq2seq_attention_positionalEncoding_pytorch.py](answers/seq2seq_attention_positionalEncoding_pytorch.py)
-
-
-## Q. Seq2Seq + Attention (Final. Parameter setting)
-
-元論文
-- Attention if All You Need https://arxiv.org/abs/1706.03762 (2017)
+### Parameter setting
 
 Attentionのパラメータを論文の通りに実装してみる。
 Table.3に様々なタイプのパラメータが載っているが、ここではbaseモデルの通りに実装してみる。
@@ -313,9 +281,12 @@ Table.3に様々なタイプのパラメータが載っているが、ここで�
 - AttentionのValueの次元数は d_v = 64
 - DropoutのDrop確率は P_drop = 0.1
 
-## Q. Seq2Seq + Attention (Hard Attention)
+答え
+- PyTorch [scripts_pytorch/Transformer_pytorch.py](scripts_pytorch/Transformer_pytorch.py)
 
-元論文 >>
+## Transformer (Hard Attention)
+
+[Ref]
 - Memory Network https://arxiv.org/abs/1410.3916 (2014)
 - Recurrent Models of Visual Attention https://arxiv.org/abs/1406.6247 (2014)
 
@@ -328,12 +299,11 @@ Table.3に様々なタイプのパラメータが載っているが、ここで�
 <img src='assets/hard_attention.png' width=300>
 
 答え
-- PyTorch [answers/seq2seq_attention_hardAttention_pytorch.py](answers/seq2seq_attention_hardAttention_pytorch.py)
+- PyTorch [scripts_pytorch/Transformer_HardAttention_pytorch.py](scripts_pytorch/Transformer_HardAttention_pytorch.py)
 
-## Q. HRED
+## HRED
 
-元論文 >>
-- A Hierarchical Recurrent Encoder-Decoder For Generative Context-Aware Query Suggestion https://arxiv.org/abs/1507.02221 (2015)
+[Ref] A Hierarchical Recurrent Encoder-Decoder For Generative Context-Aware Query Suggestion https://arxiv.org/abs/1507.02221 (2015)
 
 HREDは Hierarchical Recurrent Encoder Decoderの略。
 
@@ -388,17 +358,17 @@ B: でちっちぇのしかないんだよ。ほらよいなんだよな
 ※解答はseq2seqのプログラムをもとにしているので、Attentionなどのコードも残っている。
 
 答え
-- PyTorch [answers/HRED_pytorch.py](answers/HRED_pytorch.py)
+- PyTorch [scripts_pytorch/HRED_pytorch.py](scripts_pytorch/HRED_pytorch.py)
 
-## Q. VHRED
+## VHRED
 
-元論文 >> https://arxiv.org/abs/1605.06069
+[Ref] https://arxiv.org/abs/1605.06069
 
 VHRED = Variational Hierarchical Recurrent Encoder Decoder で、HREDにVariationalを導入したもの。
 
 
 
-## Q. Word2Vec (Skip-gram)
+## Word2Vec (Skip-gram)
 
 答え
-- PyTorch [answers/word2vec_pytorch.py](answers/word2vec_pytorch.py)
+- PyTorch [scripts_pytorch/word2vec_pytorch.py](scripts_pytorch/word2vec_pytorch.py)

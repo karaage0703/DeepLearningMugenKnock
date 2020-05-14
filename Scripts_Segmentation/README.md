@@ -1,4 +1,4 @@
-# Q. SemanticSegmentation編
+# Q. SemanticSegmentation
 
 ここではSemanticSegmentationの実装を行っていきます。
 
@@ -22,7 +22,9 @@ SemanticSegmentataionのイメージが掴めたでしょう。
 **ちなみにSemaSegのGround-truthは *../Dataset/train/seg_images* にあります。
 アカハライモリは RGB=(127,0,0)、マダライモリはRGB=(0,127,0)、背景はRGB=(0,0,0)で設定してます。**
 
-## Binalization Step.1. データセット読み込み
+## Binalization
+
+### Load dataset
 
 まずは簡単にSigmoidを使って、イモリか背景かを分類するSemanticSegmentationのモデルを作っていきます。
 
@@ -44,20 +46,12 @@ Groud-truthは *../Dataset/train/seg_images* にpngで入ってます。(なぜp
 
 pngを読み込んだら、イモリの位置になっている部分が1、それ以外が0となるようにground-truthを作成してください。
 
-答え
-- Pytorch [scripts_pytorch/bin_dataset_pytorch.py](scripts_pytorch/bin_dataset_pytorch.py)
-- Tensorflow [scripts_tf_slim/bin_dataset_tensorflow_slim.py](scripts_tf_slim/bin_dataset_tensorflow_slim.py)
-- Keras [scripts_keras/bin_dataset_keras.py](scripts_keras/bin_dataset_keras.py)
-- chainer [scripts_chainer/bin_dataset_chainer.py](scripts_chainer/bin_dataset_chainer.py)
-
-## Binalization Step.2. 学習時のLoss計算
+### Training
 
 あとは学習するだけでっす。
 
 ここでLossは*Sigmoid Cross Entropy* を用います。各フレームワーク毎の使い方はこうです。
-
-### PyTorch
-*torch.nn.BCELoss* を使います。ただし、これの引数はy, tとも*torch.float*型であるので注意。
+pytorchでは、*torch.nn.BCELoss* を使います。ただし、これの引数はy, tとも*torch.float*型であるので注意。
 
 ```python
 y = model(x)
@@ -70,13 +64,7 @@ loss = torch.nn.BCELoss()(y, t)
 *Convolution(kernel_size=3, kernel_number=32, padding=1, stride=1) + ReLU + BatchNormalization()*
 を6回適用して最後に *Convolution(kernel_size=1, kernel_number=1, padding=0, stride=1)* を適用するネットワークを作成し、SigmoidによるBinalizationを実現してください。入力画像サイズは64とします。（大きくしても良いがGPUを使わないと計算時間がキツキツになってしまうので注意！）(BatchNormalizationの後にReLUする場合もあるが、ReLUの後にBNの法が今回はきれいにいったのでこれでいきます)
 
-答え
-- Pytorch [scripts_pytorch/bin_loss_pytorch.py](scripts_pytorch/bin_loss_pytorch.py)
-- Tensorflow [scripts_tf_slim/bin_loss_tensorflow_slim.py](scripts_tf_slim/bin_loss_tensorflow_slim.py)
-- Keras [scripts_keras/bin_loss_keras.py](scripts_keras/bin_loss_keras.py)
-- chainer [scripts_chainer/bin_loss_chainer.py](scripts_chainer/bin_loss_chainer.py)
-
-## Binalization Step.3. テスト時の予測結果の表示
+### Prediction
 
 学習ができたら、テストあるのみ。ということで、テストデータセット *../Dataset/test/images* に対してのネットワークの出力を図示してください。
 
@@ -96,15 +84,13 @@ loss = torch.nn.BCELoss()(y, t)
 - Keras [scripts_keras/bin_test_keras.py](scripts_keras/bin_test_keras.py)
 - chainer [scripts_chainer/bin_test_chainer.py](scripts_chainer/bin_test_chainer.py)
 
-## Semantic Segmentation Step.1. データセット読み込み
+## Semantic Segmentation
 
 ここからはBinalizationでなくクラス分類も含めたSemantic Segmentationを行っていきます。
 
 まずはデータセットの読み込みから。それぞれのフレームワークでやり方が少しことなるので注意。
 
-### PyTorch
-
-出力サイズと同じサイズのゼロ行列を容易し、各ピクセル毎にクラスのインデックスを割り当てていきます。
+pytorchでは出力サイズと同じサイズのゼロ行列を容易し、各ピクセル毎にクラスのインデックスを割り当てていきます。
 
 ```python
 t = np.zeros((out_height, out_width), dtype=torch.int)
@@ -116,13 +102,7 @@ t = np.zeros((out_height, out_width), dtype=torch.int)
 |:---:|:---:|
 | ![](assets/semaseg_gt_akahara_0008.png) | ![](assets/semaseg_gt_madara_0005.png) |
 
-答え
-- Pytorch [scripts_pytorch/semaseg_dataset_pytorch.py](scripts_pytorch/semaseg_dataset_pytorch.py)
-- Tensorflow [scripts_tf_slim/semaseg_dataset_tensorflow_slim.py](scripts_tf_slim/semaseg_dataset_tensorflow_slim.py)
-- Keras [scripts_keras/semaseg_dataset_keras.py](scripts_keras/semaseg_dataset_keras.py)
-- chainer [scripts_chainer/lenet_chainer.py](scripts_chainer/semaseg_dataset_chainer.py)
-
-## Semantic Segmentation Step.2. 学習時のLoss計算
+### Training
 
 データセットを容易すればあとは学習させるだけ！ということで学習に移るけど、SemaSegの場合はBinalizationと違って、Softmaxを使う必要です。しかし、シンプルにSoftmaxを使ってはだめで、画像に対するSoftmaxのテクニックが必要です。
 
@@ -132,7 +112,7 @@ pytorchやchainerは[ミニバッチ、チャネル、高さ、幅]のshapeだ�
 
 それぞれのアルゴリズム実装は次のようになります。ネットワーク構成はBinalization時と同じとします。
 
-### Pytorch
+pytorchでは、
 1. 教師データを *permutate()* を用いて[ミニバッチ、高さ、幅、クラス数]の順にする。
 2. 教師データを *view()* を用いて[ミニバッチx高さx幅、クラス数]にreshapeする。
 3. ネットワークの出力を *view()* を用いて[ミニバッチx高さx幅]にreshapeする。
@@ -140,14 +120,7 @@ pytorchやchainerは[ミニバッチ、チャネル、高さ、幅]のshapeだ�
 
 だいたい500イテレーションくらい学習したpytorchでの結果がこれです。画像処理ではマスク画像作成などでこのようなBinalizationが行われるので、最後に２値化することはよくあります。
 
-
-答え
-- Pytorch [scripts_pytorch/semaseg_loss_pytorch.py](scripts_pytorch/semaseg_loss_pytorch.py)
-- Tensorflow [scripts_tf_slim/semaseg_loss_tensorflow_slim.py](scripts_tf_slim/semaseg_loss_tensorflow_slim.py)
-- Keras [scripts_keras/semaseg_loss_keras.py](scripts_keras/semaseg_loss_keras.py)
-- chainer [scripts_chainer/lenet_chainer.py](scripts_chaienr/semaseg_loss_chainer.py)
-
-## Semantic Segmentation Step.3. テスト時の予測結果の表示
+### Prediction
 
 あとはテストデータで予測結果を見るだけ。出力はミニバッチ部分を取ると[高さ、幅、クラス数]となるので、numpyのargmaxをうまいこと使うと、ピクセル毎の確率が最大のクラスのインデックスを取ることができます。
 
@@ -165,7 +138,7 @@ pytorchやchainerは[ミニバッチ、チャネル、高さ、幅]のshapeだ�
 - Keras [scripts_keras/semaseg_test_keras.py](scripts_keras/semaseg_test_keras.py)
 - chainer [scripts_chainer/lenet_chainer.py](scripts_chainer/semaseg_test_chainer.py)
 
-## UpSampling手法1. NearestNeighbor補間
+## UpSampling. NearestNeighbor補間
 
 ここまでで、学習の方法はができたので、あとは論文に沿って忠実にネットワークを再現していきます。
 
@@ -201,7 +174,7 @@ Nearest Neighborの方法
 - Keras [scripts_keras/nearest_keras.py](scripts_keras/nearest_keras.py)
 - chainer [scripts_chainer/nearest_chainer.py](scripts_chainer/nearest_chainer.py)
 
-## UpSampling手法2. Transposed Convolution
+## UpSampling Transposed Convolution
 
 ２つ目の方法はTransposed convolutionを使う方法です。これはconvolutionの逆なんですが、たまに*deconvolution* と言われたりするんですが、その呼び方は正しくないらしく、*transposed convolution* の方がいいらしいです。（たしかDCGANの論文に書いてました。）
 
@@ -230,7 +203,7 @@ Transposed convolutionの方法
 
 ここまででセグメンテーションを行うための基本は終わり。次から論文の実装に入っていきます！！
 
-## 特徴マップのconcat
+## Feature Map Concat
 
 ここではセグメンテーションのもう一つのテクニックを紹介します。それが特徴マップの結合(concat)です。よくあるのが、一度downsampleしてupsapmleしたものとdownsampleする前の特徴マップをチャンネル方向に結合する方法です。これによって様々な特徴量を利用できるとされていて、また、プーリングによって荒くなった特徴量の活性化を精細にできるとも考えられている。
 
@@ -353,7 +326,7 @@ _enc3 = crop_layer(enc3, dec3.shape)
 - Keras [scripts_keras/unet_keras.py](scripts_keras/unet_keras.py)
 - chainer [scripts_chainer/unet_chainer.py](scripts_chainer/unet_chainer.py)
 
-## UNet風モデル
+## UNet-like
 
 論文 
 - U-Net https://arxiv.org/abs/1505.04597 (2015)
@@ -382,7 +355,12 @@ UNetからの変更点は２つ。１つはconvolutionのpaddingを1にしたこ
 | ![](answers_image/answer_unetlike_pytorch_madara_0010.png) | ![](answers_image/answer_unetlike_pytorch_akahara_0011.png) |
 
 答え
-- Pytorch [scripts_pytorch/unetlike_pytorch.py](scripts_pytorch/unetlike_pytorch.py)
+
+Binarization
+- Pytorch [scripts_pytorch/UNetLike_Binarization_pytorch.py](scripts_pytorch/UNetLike_Binarization_pytorch.py)
+
+Semantic Segmetation
+- Pytorch [scripts_pytorch/UNetLike_pytorch.py](scripts_pytorch/UNetLike_pytorch.py)
 -  Tensorflow [scripts_tf_slim/unetlike_tensorflow_slim.py](scripts_tf_slim/unetlike_tensorflow_slim.py)
 - Keras [scripts_keras/unetlike_keras.py](scripts_keras/unetlike_keras.py)
 - chainer [scripts_chainer/unetlike_chainer.py](scripts_chainer/unetlike_chainer.py)
@@ -410,4 +388,9 @@ SegNetでは同じ特徴マップのサイズのpoolingのインデックス情�
 
 
 答え
+
+Binarization
+- Pytorch [scripts_pytorch/SegNet_Binarization_pytorch.py](scripts_pytorch/SegNet_Binarization_pytorch.py)
+
+Semantic Segmetation
 - Pytorch [scripts_pytorch/SegNet_pytorch.py](scripts_pytorch/SegNet_pytorch.py)

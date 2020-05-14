@@ -24,20 +24,20 @@ input=64, width=64, channel=3 とする。
 
 | answer_ae_keras_akahara_0009.png | answer_ae_keras_akahara_0009.png |
 |:---:|:---:|
-![](answers/answer_ae_keras_akahara_0009.png) | ![](answers/answer_ae_keras_akahara_0010.png) | 
+![](scripts_/answer_ae_keras_akahara_0009.png) | ![](scripts_/answer_ae_keras_akahara_0010.png) | 
 
 答え
 ### imori
-- Pytorch [answers/ae_pytorch.py](answers/ae_pytorch.py)
-- Tensorflow [answers/ae_tensorflow_slim.py](answers/ae_tensorflow_slim.py)
-- Keras [answers/ae_keras.py](answers/ae_keras.py)
-- Chainer [answers/ae_chainer.py](answers/ae_chainer.py)
+- Pytorch [scripts_pytorch/ae_pytorch.py](scripts_pytorch/ae_pytorch.py)
+- Tensorflow [scripts_tf_slim/ae_tensorflow_slim.py](scripts_tf_slim/ae_tensorflow_slim.py)
+- Keras [scripts_keras/ae_keras.py](scripts_keras/ae_keras.py)
+- Chainer [scripts_chainer/ae_chainer.py](scripts_chainer/ae_chainer.py)
 
 ### Cifar10
-- Pytorch [answers/ae_cifar10_pytorch.py](answers/ae_cifar10_pytorch.py)
-- Tensorflow [answers/ae_cifar10_tensorflow_slim.py](answers/ae_cifar10_tensorflow_slim.py)
-- Keras [answers/ae_cifar10_keras.py](answers/ae_cifar10_keras.py)
-- Chainer [answers/ae_cifar10_chainer.py](answers/ae_cifar10_chainer.py)
+- Pytorch [scripts_pytorch/ae_cifar10_pytorch.py](scripts_pytorch/ae_cifar10_pytorch.py)
+- Tensorflow [scripts_tf_slim/ae_cifar10_tensorflow_slim.py](scripts_tf_slim/ae_cifar10_tensorflow_slim.py)
+- Keras [scripts_keras/ae_cifar10_keras.py](scripts_keras/ae_cifar10_keras.py)
+- Chainer [scripts_chainer/ae_cifar10_chainer.py](scripts_chainer/ae_cifar10_chainer.py)
 
 ## Q. Convolutional Auto Encoder
 
@@ -54,20 +54,20 @@ AEはMLPのみの構成だったが、ここではConvolutoinとTransposed convo
 
 | answer_convae_pytorch_akahara_0011.png | answer_convae_pytorch_madara_0011.png |
 |:---:|:---:|
-![](answers/answer_convae_pytorch_akahara_0011.png) | ![](answers/answer_convae_pytorch_madara_0011.png) | 
+![](scripts_/answer_convae_pytorch_akahara_0011.png) | ![](scripts_/answer_convae_pytorch_madara_0011.png) | 
 
 答え
 ### imori
-- Pytorch [answers/convae_pytorch.py](answers/convae_pytorch.py)
-- Tensorflow [answers/convae_tensorflow_slim.py](answers/ae_tensorflow_slim.py)
-- Keras [answers/convae_keras.py](answers/convae_keras.py)
-- Chainer [answers/convae_chainer.py](answers/convae_chainer.py)
+- Pytorch [script_pytorch/convae_pytorch.py](script_pytorch/convae_pytorch.py)
+- Tensorflow [scripts_tf_slim/convae_tensorflow_slim.py](scripts_tf_slim/ae_tensorflow_slim.py)
+- Keras [scripts_keras/convae_keras.py](scripts_keras/convae_keras.py)
+- Chainer [scripts_chainer/convae_chainer.py](scripts_chainer/convae_chainer.py)
 
 ### Cifar10
-- Pytorch [answers/convae_cifar10_pytorch.py](answers/convae_cifar10_pytorch.py)
-- Tensorflow [answers/convae_cifar10_tensorflow_slim.py](answers/ae_cifar10_tensorflow_slim.py)
-- Keras [answers/convae_cifar10_keras.py](answers/convae_cifar10_keras.py)
-- Chainer [answers/convae_cifar10_chainer.py](answers/convae_cifar10_chainer.py)
+- Pytorch [script_pytorch/convae_cifar10_pytorch.py](script_pytorch/convae_cifar10_pytorch.py)
+- Tensorflow [scripts_tf_slim/convae_cifar10_tensorflow_slim.py](scripts_tf_slim/ae_cifar10_tensorflow_slim.py)
+- Keras [scripts_keras/convae_cifar10_keras.py](scripts_keras/convae_cifar10_keras.py)
+- Chainer [scripts_chainer/convae_cifar10_chainer.py](scripts_chainer/convae_cifar10_chainer.py)
 
 ## VAE
 
@@ -109,7 +109,7 @@ MNISTによる10kイテレーションのサンプルがこれ
 
 答え
 ### MNIST
-- Pytorch [answers/vae_mnist_pytorch.py](answers/vae_mnist_pytorch.py)
+- Pytorch [script_pytorch/vae_mnist_pytorch.py](script_pytorch/vae_mnist_pytorch.py)
 
 ## VAE (潜在変数の可視化)
 
@@ -123,7 +123,7 @@ VAEでは入力画像の特徴量がEncoderによって少ない潜在変数に�
 
 答え
 ### MNIST
-- Pytorch [answers/vae_latent_show_mnist_pytorch.py](answers/vae_latent_show_mnist_pytorch.py)
+- Pytorch [script_pytorch/vae_latent_show_mnist_pytorch.py](script_pytorch/vae_latent_show_mnist_pytorch.py)
 
 ## VAE (潜在変数の操作による画像の生成)
 
@@ -138,7 +138,7 @@ VAEではEncoderにより入力画像を潜在変数に落とし込む。全問�
 
 |||
 |:---:|:---:|
-| <img src='assets/vae_latent.png' width=400> | <img src='answers_image/vae_latent_change.png' width=600> |
+| <img src='assets/vae_latent.png' width=400> | <img src='scripts__image/vae_latent_change.png' width=600> |
 
 次に潜在変数z1,z2をそれぞれ-4から4まで動かしながら、Decoderで生成される画像の表を作成する。
 
@@ -152,8 +152,8 @@ Pytorchでのサンプルがこれ。それぞれの数字がクラス毎に生�
 
 答え
 ### MNIST
-- Pytorch [answers/vae_latent_change_mnist_pytorch.py](answers/vae_latent_change_mnist_pytorch.py)
-- Pytorch [answers/vae_latent_change2_mnist_pytorch.py](answers/vae_latent_change2_mnist_pytorch.py)
+- Pytorch [script_pytorch/vae_latent_change_mnist_pytorch.py](script_pytorch/vae_latent_change_mnist_pytorch.py)
+- Pytorch [scripts_/vae_latent_change2_mnist_pytorch.py](scripts_/vae_latent_change2_mnist_pytorch.py)
 
 # Adversarial Networks
 
@@ -194,7 +194,7 @@ GANはピクセルごとにLossを取るAutoEncoderとは違い、画像を非�
 4. MLP(1) + sigomid
 
 GANの出力
-![](answers_image/gan_keras.png)
+![](scripts__image/gan_keras.png)
 
 ちなみにGAN系は収束がくそ難しいことでも有名です。GANの学習ノウハウだけで論文が出てるほどです。なので、各種パラメータ調整はかなり厳しい戦いになると思います。がんばりましょう。僕もがんばりました(´；ω；｀)
 
@@ -202,14 +202,14 @@ GANの出力
 
 答え
 ### imori
-- PyTorch [answers/gan_pytorch.py](answers/gan_pytorch.py)
-- Keras [answers/gan_keras.py](answers/gan_keras.py)
-- Chainer [answers/gan_chainer.py](answers/gan_chainer.py)
+- PyTorch [script_pytorch/gan_pytorch.py](script_pytorch/gan_pytorch.py)
+- Keras [scripts_keras/gan_keras.py](scripts_keras/gan_keras.py)
+- Chainer [scripts_chainer/gan_chainer.py](scripts_chainer/gan_chainer.py)
 
 ### cifar10
-- PyTorch [answers/gan_cifar10_pytorch.py](answers/gan_cifar10_pytorch.py)
-- Keras [answers/gan_cifar10_keras.py](answers/gan_cifar10_keras.py)
-- Chainer [answers/gan_cifar10_chainer.py](answers/gan_cifar10_chainer.py)
+- PyTorch [script_pytorch/gan_cifar10_pytorch.py](script_pytorch/gan_cifar10_pytorch.py)
+- Keras [scripts_keras/gan_cifar10_keras.py](scripts_keras/gan_cifar10_keras.py)
+- Chainer [scripts_chainer/gan_cifar10_chainer.py](scripts_chainer/gan_cifar10_chainer.py)
 
 ## DCGAN
 
@@ -242,20 +242,20 @@ GANの進化版、DCGAN (Deep Convolutional GAN)。GANはMulti layer perceptron�
 4. MLP(1) + sigomid
 
 DCGANの出力
-![](answers_image/dcgan_keras.png)
+<img src="answers_image/dcgan_keras.png" >
 
 答え
 ### imori
-- Pytorch [answers/dcgan_pytorch.py](answers/dcgan_pytorch.py)
-- tensorflow [answers/dcgan_tensorflow_slim.py](answers/dcgan_tensorflow_slim.py)
-- Keras [answers/dcgan_keras.py](answers/dcgan_keras.py)
-- Chainer [answers/dcgan_chainer.py](answers/dcgan_chainer.py)
+- Pytorch [script_pytorch/dcgan_pytorch.py](script_pytorch/dcgan_pytorch.py)
+- tensorflow [scripts_tf_slim/dcgan_tensorflow_slim.py](scripts_tf_slim/dcgan_tensorflow_slim.py)
+- Keras [scripts_keras/dcgan_keras.py](scripts_keras/dcgan_keras.py)
+- Chainer [scripts_chainer/dcgan_chainer.py](scripts_chainer/dcgan_chainer.py)
 
 ### cifar10
-- Pytorch [answers/dcgan_cifar10_pytorch.py](answers/dcgan_cifar10_pytorch.py)
-- Tensorflow [answers/dcgan_cifar10_tensorflow_slim.py](answers/dcgan_cifar10_tensorflow_slim.py)
-- Keras [answers/dcgan_cifar10_keras.py](answers/dcgan_cifar10_keras.py)
-- Chainer [answers/dcgan_cifar10_chainer.py](answers/dcgan_cifar10_chainer.py)
+- Pytorch [script_pytorch/dcgan_cifar10_pytorch.py](script_pytorch/dcgan_cifar10_pytorch.py)
+- Tensorflow [scripts_tf_slim/dcgan_cifar10_tensorflow_slim.py](scripts_tf_slim/dcgan_cifar10_tensorflow_slim.py)
+- Keras [scripts_keras/dcgan_cifar10_keras.py](scripts_keras/dcgan_cifar10_keras.py)
+- Chainer [scripts_chainer/dcgan_cifar10_chainer.py](scripts_chainer/dcgan_cifar10_chainer.py)
 
 
 ## Conditional GAN
@@ -277,23 +277,23 @@ DCGANはGANよりきれいな画像を作成することができますが、あ
 ### mnist
 MNISTでの出力はこんな感じになります。
 
-![](answers_image/answer_cgan_mnist_pytorch.png)
+![](scripts__image/answer_cgan_mnist_pytorch.png)
 
-- Pytorch [answers/cgan_mnist_pytorch.py](answers/cgan_mnist_pytorch.py)
-- Tensorflow [answers/cgan_mnist_tensorflow_slim.py](answers/cgan_mnist_tensorflow_slim.py)
-- Keras [answers/cgan_mnist_keras.py](answers/cgan_mnist_keras.py)
-- Chainer [answers/cgan_mnist_chainer.py](answers/cgan_mnist_chainer.py)
+- Pytorch [script_pytorch/cgan_mnist_pytorch.py](script_pytorch/cgan_mnist_pytorch.py)
+- Tensorflow [scripts_tf_slim/cgan_mnist_tensorflow_slim.py](scripts_tf_slim/cgan_mnist_tensorflow_slim.py)
+- Keras [scripts_keras/cgan_mnist_keras.py](scripts_keras/cgan_mnist_keras.py)
+- Chainer [scripts_chainer/cgan_mnist_chainer.py](scripts_chainer/cgan_mnist_chainer.py)
 
 
 ### cifar10
 CIFAR10での出力はこんな感じになります。
 
-![](answers_image/answer_cgan_cifar10_pytorch.png)
+![](scripts__image/answer_cgan_cifar10_pytorch.png)
 
-- Pytorch [answers/cgan_cifar10_pytorch.py](answers/cgan_cifar10_pytorch.py)
-- Tensorflow [answers/cgan_cifar10_tensorflow_slim.py](answers/cgan_cifar10_tensorflow_slim.py)
-- Keras [answers/cgan_cifar10_keras.py](answers/cgan_cifar10_keras.py)
-- Chainer [answers/cgan_cifar10_chainer.py](answers/cgan_cifar10_chainer.py)
+- Pytorch [script_pytorch/cgan_cifar10_pytorch.py](script_pytorch/cgan_cifar10_pytorch.py)
+- Tensorflow [scripts_tf_slim/cgan_cifar10_tensorflow_slim.py](scripts_tf_slim/cgan_cifar10_tensorflow_slim.py)
+- Keras [scripts_keras/cgan_cifar10_keras.py](scripts_keras/cgan_cifar10_keras.py)
+- Chainer [scripts_chainer/cgan_cifar10_chainer.py](scripts_chainer/cgan_cifar10_chainer.py)
 
 ## pix2pix
 
@@ -307,7 +307,7 @@ pix2pixは画素（pixel)と画素の関係を学習させる。
 <img src="assets/pix2pix_fig2.png" width="300">
 
 答え
-- Pytorch [answers/pix2pix_segment_pytorch.py](answers/pix2pix_segment_pytorch.py)
+- Pytorch [script_pytorch/pix2pix_segment_pytorch.py](script_pytorch/pix2pix_segment_pytorch.py)
 
 ## pix2pix-GP
 
@@ -316,7 +316,7 @@ pix2pixにGradient Penaltyを加えたもの
 参照論文はなし
 
 答え
-- Pytorch [answers/pix2pixGP_pytorch.py](answers/pix2pixGP_pytorch.py)
+- Pytorch [script_pytorch/pix2pixGP_pytorch.py](script_pytorch/pix2pixGP_pytorch.py)
 
 ## WGAN
 
@@ -349,7 +349,7 @@ Cifar10でPytorchでの結果はこんな感じ。正直まだ何の画像かは
 | 100k iteration |
 | <img src='answers_image/wgan_iter_100000.jpg' width=600> |
 
-- Pytorch [answers/WGAN_cifar10_pytorch.py](answers/WGAN_cifar10_pytorch.py)
+- Pytorch [script_pytorch/WGAN_cifar10_pytorch.py](script_pytorch/WGAN_cifar10_pytorch.py)
 
 ## WGAN-GP
 
@@ -409,9 +409,10 @@ Pytorchによる結果はこんな感じ。それっぽい画像はできてい�
 
 答え
 ### imori
-- Pytorch [answers/WGAN-GP_pytorch.py](answers/WGAN-GP_pytorch.py)
+- Pytorch [script_pytorch/WGAN-GP_pytorch.py](script_pytorch/WGAN-GP_pytorch.py)
+
 ### cifar10
-- Pytorch [answers/WGAN-GP_cifar10_pytorch.py](answers/WGAN-GP_cifar10_pytorch.py)
+- Pytorch [script_pytorch/WGAN-GP_cifar10_pytorch.py](script_pytorch/WGAN-GP_cifar10_pytorch.py)
 
 ## Alpha-GAN
 
@@ -468,8 +469,8 @@ Pytorch実装のCifar10の例はこんな感じ。画像としては荒い感じ
 
 MNIST
 
-- Pytorch [answers/alphaGAN_mnist_pytorch.py](answers/alphaGAN_mnist_pytorch.py)
+- Pytorch [script_pytorch/alphaGAN_mnist_pytorch.py](script_pytorch/alphaGAN_mnist_pytorch.py)
 
 CIFAR10
 
-- Pytorch [answers/alphaGAN_cifar10_pytorch.py](answers/alphaGAN_cifar10_pytorch.py)
+- Pytorch [script_pytorch/alphaGAN_cifar10_pytorch.py](script_pytorch/alphaGAN_cifar10_pytorch.py)

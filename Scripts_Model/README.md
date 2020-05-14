@@ -1,4 +1,4 @@
-# Q. 画像認識編
+# Modeling
 
 ここではCNNの有名モデルを自分の手で実装していきます。フレームワークは自由だが、**とりあえずPyTorch, Tensorflow, Keras, Chainer全部で実装してください。**
 ネットワークを作ったら、学習率やイテレーションを変えて、テストデータセット *../Dataset/test/images* でテストしてみてください。
@@ -24,7 +24,7 @@ pytorchの参考サイト >> https://github.com/creafz/pytorch-cnn-finetune
 答え
 - Pytorch [scripts_pytorch/api_pytorch.py](scripts_pytorch/api_pytorch.py)
 
-## Q. LeNet
+## LeNet
 
 元論文 >> Gradient-based learning applied to document recognition http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf (1998)
 
@@ -51,7 +51,7 @@ pytorchの参考サイト >> https://github.com/creafz/pytorch-cnn-finetune
 - Keras [scripts_keras/lenet_keras.py](scripts_keras/lenet_keras.py)
 - chainer [scripts_chainer/lenet_chainer.py](scripts_chainer/lenet_chainer.py)
 
-## Q. AlexNet
+## AlexNet
 
 元論文 >> ImageNet Classification with Deep Convolutional Neural Networks https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks (2012)
 
@@ -92,7 +92,7 @@ LRNは効果が薄いことから最近ではほとんど使われてません�
 - chainer [scripts_chainer/alexnet_chainer.py](scripts_chainer/alexnet_chainer.py)
 
 
-## Q. ZFNet
+## ZFNet
 
 元論文 >> Visualizing and Understanding Convolutional Networks https://arxiv.org/abs/1311.2901 (2013)
 
@@ -124,37 +124,7 @@ Alexnetの最初のconvlutionを7x7のカーネルにして、ストライドを
 - Keras [scripts_keras/zfnet_keras.py](scripts_keras/zfnet_keras.py)
 - chainer [scripts_chainer/zfnet_chainer.py](scripts_chainer/zfnet_chainer.py)
 
-## Q. Global Average Pooling
-
-論文 >> Network In Network https://arxiv.org/abs/1312.4400 (2013)
-
-ここではGlobal average poolingを実装してください。これはMLPを使わないでConvolutionaだけのモデル(**FCN: Fully Convolutional Network**)でクラス分類を行うために考案されました。通常クラス分類はMLPをクラスの数だけ用意する必要があるけど、これではネットワークへの入力サイズが固定化されてしまいます。これはMLPの性質による。しかしGAPによりこれは解決されます。
-
-GAPはConvolutionによる生成される特徴マップの内の１チャネルの全部の値のaverage値を取る操作を行います。そうすると、チャネルの数だけの値が取れます。これにSoftmax関数を適用することでクラス分類が行われます。
-
-アルゴリズムは、
-1. ネットワークのMLPを消す。
-2. クラス数の**カーネル数**(カーネルサイズでないので注意カーネルサイズはよく1x1が使われる。)を持ったConvolutionを最後につける。
-3. GAPを適用する。
-4. Softmaxを適用する。
-
-これでFCNの完成です！人によってはGAP後にMLPを入れる時もあるが、どちらにしても入力画像サイズが自由なモデルが作れます。GAPはNetwork in networkの論文で提唱された手法です。
-
-今回はZFネットにGAPを適用してください。
-
-| FW | function | FW | function |
-|:---:|:---:|:---:|:---:|
-| PyTorch | torch.nn.AdaptiveAvgPooling2d() + Viewでreshape | Keras | keras.layers.GlobalAveragePooling2D() |
-| TensorFlow | tf.reduce_mean()を２回適用 | Chainer | chainer.functions.average() |
-
-答え
-- Pytorch [scripts_pytorch/gap_pytorch.py](scripts_pytorch/gap_pytorch.py)
-- Tensorflow [scripts_tf_layers/GAP_tf_layers.py](scripts_tf_layers/GAP_tf_layers.py)
-- Keras [scripts_keras/gap_keras.py](scripts_keras/gap_keras.py)
-- chainer [scripts_chainer/gap_chainer.py](scripts_chainer/gap_chainer.py)
-
-
-## Q. Network in network
+## Network in network
 
 論文 >> Network In Network https://arxiv.org/abs/1312.4400 (2013)
 
@@ -184,7 +154,7 @@ Convolution | 3 x 3 | 192 | 1 | 1 | ReLU |
 - Keras [scripts_keras/nin_keras.py](scripts_keras/vgg16_keras.py)
 - chainer [scripts_chainer/nin_chainer.py](scripts_chainer/nin_chainer.py)
 
-## Q. VGG16
+## VGG16
 
 元論文 >> Very Deep Convolutional Networks for Large-Scale Image Recognition https://arxiv.org/abs/1409.1556 (2014)
 
@@ -221,7 +191,7 @@ VGG16とはOxfort大学の研究グループが提案したモデルであり、
 - Keras [scripts_keras/vgg16_keras.py](scripts_keras/vgg16_keras.py)
 - chainer [scripts_chainer/vgg16_chainer.py](scripts_chainer/vgg16_chainer.py)
 
-## Q. VGG19
+## VGG19
 
 元論文 >> Very Deep Convolutional Networks for Large-Scale Image Recognition https://arxiv.org/abs/1409.1556 (2014)
 
@@ -262,7 +232,7 @@ VGG19はVGG16にConvolutionが3つ増えたバージョン。こっちよりもV
 - chainer [scripts_chainer/vgg19_chainer.py](scripts_chainer/vgg19_chainer.py)
 
 
-## Q. GoogLeNet-v1
+## GoogLeNet-v1
 
 元論文 >> Going Deeper with Convolutions https://arxiv.org/abs/1409.4842 (2014)
 
@@ -271,26 +241,7 @@ VGG19はVGG16にConvolutionが3つ増えたバージョン。こっちよりもV
 - Keras [scripts_keras/googlenetv1_keras.py](scripts_keras/googlenetv1_keras.py)
 - chainer [scripts_chainer/bn_chainer.py](scripts_chainer/bn_chainer.py)
 
-
-##  Q. Batch Normalization
-
-元論文 >> Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift https://arxiv.org/abs/1502.03167 (2015)
-
-Batch normalizationとは学習をめちゃくちゃ効率化するための手法です。今ではどのディープラーニングでもBNはかかせない存在となっています。
-
-論文中では学習がうまくいかないのは、そもそもconvolutionしまくると値がシフトしてしまうことが原因だといってます。これが共分散シフトです。なのでBNはlayerの出力に対して正規化を行うことでこのシフトをなくすのが目的となっています。
-
-ここではVGG16のconvの後にBNを実装してみましょう。
-
-pytorchでは*torch.nn.BatchNorm2d()*, tensorflowでは*tf.layers.batch_normalization(), tf.layers.BatchNormalization()*, Kerasでは*keras.layers.BatchNormalization()* ,chainerでは*chainer.links.BatchNormalization()* で実装できる。
-
-答え
-- Pytorch [scripts_pytorch/bn_pytorch.py](scripts_pytorch/bn_pytorch.py)
-- Tensorflow [scripts_tf_layers/BN_tf_layers.py](scripts_tf_layers/BN_tf_layers.py)
-- Keras [scripts_keras/bn_keras.py](scripts_keras/bn_keras.py)
-- chainer [scripts_chainer/bn_chainer.py](scripts_chainer/bn_chainer.py)
-
-## Q. ResNet
+## ResNet
 
 元論文 >> Deep Residual Learning for Image Recognition https://arxiv.org/abs/1512.03385 (2015)
 
@@ -301,19 +252,19 @@ Skip connectionによって、Lossのback propagationの効率化を行った。
 
 答え
 
-#### Res18
+#### ResNet18
 
 - Pytorch [scripts_pytorch/res18_pytorch.py](scripts_pytorch/res18_pytorch.py)
 - TensorFlow [scripts_tf_layers/Res18_tf_layers.py](scripts_tf_layers/Res18_tf_layers.py)
 - Keras [scripts_keras/res18_keras.py](scripts_keras/res18_keras.py)
 
-#### Res34
+#### ResNet34
 
 - Pytorch [scripts_pytorch/res34_pytorch.py](scripts_pytorch/res34_pytorch.py)
 - TensorFlow [scripts_tf_layers/Res34_tf_layers.py](scripts_tf_layers/Res34_tf_layers.py)
 - Keras [scripts_keras/res34_keras.py](scripts_keras/res34_keras.py)
 
-#### Res50
+#### ResNet50
 
 - Pytorch [scripts_pytorch/res50_pytorch.py](scripts_pytorch/res50_pytorch.py)
 - TensorFlow [scripts_tf_layers/Res50_tf_layers.py](scripts_tf_layers/res50_tf_layers.py)
@@ -321,19 +272,19 @@ Skip connectionによって、Lossのback propagationの効率化を行った。
 - Keras [scripts_keras/res50_keras.py](scripts_keras/res50_keras.py)
 - chainer(WiP) [scripts_chainer/res50_chainer.py](scripts_chainer/res50_chainer.py)
 
-#### Res101
+#### ResNet101
 
 - Pytorch [scripts_pytorch/res101_pytorch.py](scripts_pytorch/res101_pytorch.py)
 - TensorFlow [scripts_tf_layers/Res101_tf_layers.py](scripts_pytorch/Res101_tf_layers.py)
 - Keras [scripts_keras/res101_keras.py](scripts_keras/res101_keras.py)
 
-#### Res152
+#### ResNet152
 
 - Pytorch [scripts_pytorch/res152_pytorch.py](scripts_pytorch/res152_pytorch.py)
 - TensorFlow [scripts_tf_layers/Res152_tf_layers.py](scripts_tf_layers/Res152_tf_layers.py)
 - Keras [scripts_keras/res152_keras.py](scripts_keras/res152_keras.py)
 
-## Q. ResNeXt
+## ResNeXt
 
 元論文 >> Aggregated Residual Transformations for Deep Neural Networks https://arxiv.org/abs/1611.05431 (2016)
 
@@ -354,7 +305,7 @@ ResNetのblockを内を細かく分けて、それらの和をとることでネ
 - Keras [scripts_tf_keras/resNeXt101_keras.py](scripts_keras/resNeXt101_keras.py)
 
 
-## Q. Xception
+## Xception
 
 元論文 >> Xception: Deep Learning with Depthwise Separable Convolutions https://arxiv.org/abs/1610.02357 (2016)
 
@@ -362,7 +313,7 @@ ResNetのblockを内を細かく分けて、それらの和をとることでネ
 - TensorFlow [scripts_tf_layers/xception_tf_layers.py](scripts_tf_layers/Xception_tf_layers.py)
 - Keras [scripts_keras/xception_keras.py](scripts_keras/xception_keras.py)
 
-## Q. DenseNet
+## DenseNet
 
 元論文 >> Densely Connected Convolutional Networks https://arxiv.org/abs/1608.06993 (2016)
 
@@ -386,7 +337,7 @@ ResNetのshortcut connectionは勾配を直接的に前のLayerに伝えられ�
 
 - Pytorch [scripts_pytorch/DenseNet264_pytorch.py](scripts_pytorch/DenseNet264_pytorch.py)
 
-## Q. MobileNet-v1
+## MobileNet-v1
 
 元論文 >> MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications https://arxiv.org/abs/1704.04861?source=post_page--------------------------- (2017)
 
@@ -423,7 +374,7 @@ M Df Df (Dk Dk + N) / Dk Dk M N Df Df = (Dk Dk + N) / Dk Dk N = 1 / N + 1 / Dk^2
 - Pytorch [scripts_pytorch/MobileNet_v1_pytorch.py](scripts_pytorch/MobileNet_v1_pytorch.py)
 - TensorFlow [scripts_tf_layers/MobileNet_v1_tf_layers.py](scripts_tf_layers/MobileNet_v1_tf_layers.py)
 
-## Q. MobileNet-v2
+## MobileNet-v2
 
 元論文 >> MobileNetV2: Inverted Residuals and Linear Bottlenecks https://arxiv.org/abs/1801.04381 (2018)
 

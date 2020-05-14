@@ -1,6 +1,3 @@
-from google.colab import drive
-drive.mount("/content/drive", force_remount=True)
-
 import torch
 import torch.nn.functional as F
 import argparse
@@ -9,12 +6,11 @@ import numpy as np
 from glob import glob
 import matplotlib.pyplot as plt
 from copy import copy
+from tqdm import tqdm
 
 # class config
-class_label = {'akahara': [0,0,128],
-       'madara': [0,128,0]}
-
-class_N = len(class_label)
+class_label = {'akahara' : [0, 0, 128], 'madara' : [0, 128, 0]}
+class_N = len(class_label) + 1 # class + background
 
 # config
 img_height, img_width = 64, 64 #572, 572
@@ -22,7 +18,7 @@ out_height, out_width = 64, 64 #388, 388
 channel = 3
 
 # GPU
-GPU = False
+GPU = True
 device = torch.device("cuda" if GPU and torch.cuda.is_available() else "cpu")
 
 # other
@@ -137,76 +133,138 @@ class SegNet(torch.nn.Module):
         
         return x
 
-    
 # get train data
-def data_load(path, hf=False, vf=False):
-    xs = []
-    ts = []
+def data_load(path, hf=False, vf=False, rot=False):
+    if (rot == 0) and (rot != False):
+        raise Exception('invalid rot >> ', rot, 'should be [1, 359] or False')
+
     paths = []
+    paths_gt = []
+    
+    data_num = 0
+    for dir_path in glob(path + '/*'):
+        data_num += len(glob(dir_path + "/*"))
+            
+    pbar = tqdm(total = data_num)
     
     for dir_path in glob(path + '/*'):
         for path in glob(dir_path + '/*'):
-            x = cv2.imread(path)
-            x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
-            x /= 255.
-            x = x[..., ::-1]
-            xs.append(x)
+            for i, cls in enumerate(class_label):
+                if cls in path:
+                    t = i
 
+            paths.append({'path': path, 'hf': False, 'vf': False, 'rot': 0})
+            
             gt_path = path.replace("images", "seg_images").replace(".jpg", ".png")
-            gt = cv2.imread(gt_path)
-            gt = cv2.resize(gt, (out_width, out_height), interpolation=cv2.INTER_NEAREST)
+            paths_gt.append({'path': gt_path, 'hf': False, 'vf': False, 'rot': 0})
 
-            t = np.zeros((out_height, out_width), dtype=np.int)
+            # horizontal flip
+            if hf:
+                paths.append({'path': path, 'hf': True, 'vf': False, 'rot': 0})
+                paths_gt.append({'path': gt_path, 'hf': True, 'vf': False, 'rot': 0})
+            # vertical flip
+            if vf:
+                paths.append({'path': path, 'hf': False, 'vf': True, 'rot': 0})
+                paths_gt.append({'path': gt_path, 'hf': False, 'vf': True, 'rot': 0})
+            # horizontal and vertical flip
+            if hf and vf:
+                paths.append({'path': path, 'hf': True, 'vf': True, 'rot': 0})
+                paths_gt.append({'path': gt_path, 'hf': True, 'vf': True, 'rot': 0})
+            # rotation
+            if rot is not False:
+                angle = rot
+                while angle < 360:
+                    paths.append({'path': path, 'hf': False, 'vf': False, 'rot': rot})
+                    paths_gt.append({'path': gt_path, 'hf': False, 'vf': False, 'rot': rot})
+                    angle += rot
+                
+            pbar.update(1)
+                    
+    pbar.close()
+    
+    return np.array(paths), np.array(paths_gt)
+
+def get_image(infos, gt=False):
+    xs = []
+    
+    for info in infos:
+        path = info['path']
+        hf = info['hf']
+        vf = info['vf']
+        rot = info['rot']
+        x = cv2.imread(path)
+
+        # resize
+        if gt:
+            x = cv2.resize(x, (img_width, img_height)).astype(np.float32)
+        else:
+            x = cv2.resize(x, (out_width, out_height)).astype(np.float32)
+        
+        # channel BGR -> Gray
+        if channel == 1:
+            x = cv2.cvtColor(x, cv2.COLOR_BGR2GRAY)
+            x = np.expand_dims(x, axis=-1)
+
+        # horizontal flip
+        if hf:
+            x = x[:, ::-1]
+
+        # vertical flip
+        if vf:
+            x = x[::-1]
+
+        # rotation
+        scale = 1
+        _h, _w, _c = x.shape
+        max_side = max(_h, _w)
+        tmp = np.zeros((max_side, max_side, _c))
+        tx = int((max_side - _w) / 2)
+        ty = int((max_side - _h) / 2)
+        tmp[ty: ty+_h, tx: tx+_w] = x.copy()
+        M = cv2.getRotationMatrix2D((max_side / 2, max_side / 2), rot, scale)
+        _x = cv2.warpAffine(tmp, M, (max_side, max_side))
+        x = _x[tx:tx+_w, ty:ty+_h]
+
+        if gt:
+            _x = x
+            x = np.zeros((out_height, out_width), dtype=np.int)
 
             for i, (_, vs) in enumerate(class_label.items()):
-                ind = (gt[...,0] == vs[0]) * (gt[...,1] == vs[1]) * (gt[...,2] == vs[2])
-                t[ind] = i + 1
-            #print(gt_path)
-            #import matplotlib.pyplot as plt
-            #plt.imshow(t)
-            #plt.show()
+                ind = (_x[..., 0] == vs[0]) * (_x[..., 1] == vs[1]) * (_x[..., 2] == vs[2])
+                x[ind] = i + 1
+        else:
+            # normalization [0, 255] -> [-1, 1]
+            x = x / 127.5 - 1
 
-            ts.append(t)
-            
-            paths.append(path)
+            # channel BGR -> RGB
+            if channel == 3:
+                x = x[..., ::-1]
 
-            if hf:
-                xs.append(x[:, ::-1])
-                ts.append(t[:, ::-1])
-                paths.append(path)
+        xs.append(x)
+                
+    xs = np.array(xs, dtype=np.float32)
 
-            if vf:
-                xs.append(x[::-1])
-                ts.append(t[::-1])
-                paths.append(path)
-
-            if hf and vf:
-                xs.append(x[::-1, ::-1])
-                ts.append(t[::-1, ::-1])
-                paths.append(path)
-
-    xs = np.array(xs)
-    ts = np.array(ts)
-
-    xs = xs.transpose(0,3,1,2)
+    if not gt:
+        xs = np.transpose(xs, (0,3,1,2))
     
-    return xs, ts, paths
+    return xs
 
 
 # train
 def train():
     # model
     model = SegNet().to(device)
-    opt = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
     model.train()
 
-    xs, ts, paths = data_load('../Dataset/train/images/', hf=True, vf=True)
+    opt = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
+    paths, paths_gt = data_load('drive/My Drive/Colab Notebooks/' + '/Dataset/train/images/', hf=True, vf=True, rot=5)
 
     # training
     mb = 16
     mbi = 0
-    train_N = len(xs)
-    train_ind = np.arange(len(xs))
+    train_N = len(paths)
+    train_ind = np.arange(train_N)
     np.random.seed(0)
     np.random.shuffle(train_ind)
 
@@ -216,18 +274,20 @@ def train():
         if mbi + mb > train_N:
             mb_ind = copy(train_ind[mbi:])
             np.random.shuffle(train_ind)
-            mb_ind = np.hstack((mb_ind, train_ind[:(mb - (train_N - mbi))]))
+            mb_ind = np.hstack((mb_ind, train_ind[ : (mb - (train_N - mbi))]))
             mbi = mb - (train_N - mbi)
         else:
             mb_ind = train_ind[mbi : mbi + mb]
             mbi += mb
 
-        x = torch.tensor(xs[mb_ind], dtype=torch.float).to(device)
-        t = torch.tensor(ts[mb_ind], dtype=torch.long).to(device)
+        # data load
+        x = torch.tensor(get_image(paths[mb_ind]), dtype=torch.float).to(device)
+        t = torch.tensor(get_image(paths_gt[mb_ind], gt=True), dtype=torch.long).to(device)
 
         opt.zero_grad()
         y = model(x)
 
+        # reshape gt
         y = y.permute(0,2,3,1).contiguous()
         y = y.view(-1, class_N)
         t = t.view(-1)
@@ -237,9 +297,10 @@ def train():
         opt.step()
     
         pred = y.argmax(dim=1, keepdim=True)
-        acc = pred.eq(t.view_as(pred)).sum().item() / mb / img_height / img_width
+        acc = pred.eq(t.view_as(pred)).sum().item() / mb / out_height / out_width
         
-        print("iter :", i+1, ', loss :', loss.item(), ', accuracy :', acc)
+        if (i + 1) % 50 == 0:
+            print('Iter : {} , Loss : {} , Accuracy : {}'.format(i + 1, loss.item(), acc))
 
     torch.save(model.state_dict(), model_path)
 
@@ -249,43 +310,42 @@ def test():
     model.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
     model.eval()
 
-    xs, ts, paths = data_load('../Dataset/test/images/')
+    paths, path_gt = data_load('drive/My Drive/Colab Notebooks/' + '/Dataset/test/images/')
 
     with torch.no_grad():
         for i in range(len(paths)):
-            x = xs[i]
-            t = ts[i]
-            path = paths[i]
+            path = paths[[i]]
+            x = get_image(path)
 
-            x = np.expand_dims(x, axis=0)
-            x = torch.tensor(x, dtype=torch.float).to(device)
+            x = torch.tensor(get_image(paths[[i]]), dtype=torch.float).to(device)
 
             pred = model(x)
 
-            #pred = pred.permute(0,2,3,1).reshape(-1, class_N+1)
+            #pred = pred.permute(0,2,3,1).reshape(-1, class_num+1)
             pred = pred.detach().cpu().numpy()[0]
             pred = pred.argmax(axis=0)
 
-            # visualize
+            # prediction -> RGB
             out = np.zeros((out_height, out_width, 3), dtype=np.uint8)
             for i, (_, vs) in enumerate(class_label.items()):
-                out[pred == (i+1)] = vs
+                out[pred == (i + 1)] = vs
 
-            print("in {}".format(path))
+            print(">> {}".format(path[0]['path']))
 
-            plt.subplot(1,2,1)
-            plt.imshow(x.detach().cpu().numpy()[0].transpose(1,2,0))
-            plt.subplot(1,2,2)
+            plt.subplot(1, 2, 1)
+            plt.imshow((x.detach().cpu().numpy()[0].transpose(1,2,0) * 127.5 + 127.5).astype(np.uint8))
+            plt.subplot(1, 2, 2)
             plt.imshow(out[..., ::-1])
             plt.show()
     
 
 def arg_parse():
-    parser = argparse.ArgumentParser(description='CNN implemented with Keras')
+    parser = argparse.ArgumentParser(description='')
     parser.add_argument('--train', dest='train', action='store_true')
     parser.add_argument('--test', dest='test', action='store_true')
     args = parser.parse_args()
     return args
+
 
 # main
 if __name__ == '__main__':

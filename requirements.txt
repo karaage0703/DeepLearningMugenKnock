@@ -1,6 +1,7 @@
 numpy
 matplotlib
 opencv-python
+easydict
 tensorflow
 keras
 torch
